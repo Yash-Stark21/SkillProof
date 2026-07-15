@@ -1,0 +1,186 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://skillproof.dev/schemas/evidence-contract-v0.1.schema.json",
+  "title": "SkillProof Golden Evidence Manifest 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "fixture_id",
+    "description",
+    "repository",
+    "detector_version",
+    "coverage",
+    "files",
+    "expected_evidence",
+    "forbidden_evidence"
+  ],
+  "properties": {
+    "contract_version": { "const": "0.1" },
+    "fixture_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+    "description": { "type": "string", "minLength": 1 },
+    "repository": { "$ref": "#/$defs/repository" },
+    "detector_version": { "const": "0.1.0" },
+    "coverage": { "$ref": "#/$defs/coverage" },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "expected_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/evidence" }
+    },
+    "forbidden_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/forbiddenEvidence" }
+    },
+    "redaction_cases": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/redactionCase" }
+    }
+  },
+  "$defs": {
+    "commitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "owner", "name", "url", "commit_sha"],
+      "properties": {
+        "provider": { "const": "github" },
+        "owner": { "type": "string", "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$" },
+        "name": { "type": "string", "pattern": "^[A-Za-z0-9._-]+$" },
+        "url": { "type": "string", "format": "uri", "pattern": "^https://github\\.com/" },
+        "commit_sha": { "$ref": "#/$defs/commitSha" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason"],
+      "properties": {
+        "state": { "enum": ["complete", "partial"] },
+        "reason": { "type": ["string", "null"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "state": { "const": "complete" } }, "required": ["state"] },
+          "then": { "properties": { "reason": { "type": "null" } } },
+          "else": { "properties": { "reason": { "type": "string", "minLength": 1 } } }
+        }
+      ]
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_skill_id",
+        "rule_id",
+        "detector_version",
+        "repository",
+        "commit_sha",
+        "path",
+        "content_hash",
+        "start_line",
+        "end_line",
+        "redacted_excerpt",
+        "evidence_kind",
+        "confidence",
+        "coverage_state",
+        "created_at",
+        "claim_eligible"
+      ],
+      "properties": {
+        "canonical_skill_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "rule_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.-]*$" },
+        "detector_version": { "const": "0.1.0" },
+        "repository": { "type": "string", "pattern": "^github:[A-Za-z0-9-]+/[A-Za-z0-9._-]+$" },
+        "commit_sha": { "$ref": "#/$defs/commitSha" },
+        "path": { "$ref": "#/$defs/path" },
+        "content_hash": { "$ref": "#/$defs/sha256" },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "redacted_excerpt": { "type": "string", "minLength": 1 },
+        "evidence_kind": {
+          "enum": [
+            "manifest_dependency",
+            "import",
+            "route",
+            "test",
+            "component",
+            "hook",
+            "configuration",
+            "language_syntax",
+            "documentation_reference"
+          ]
+        },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "coverage_state": { "enum": ["complete", "partial"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "claim_eligible": { "type": "boolean" }
+      }
+    },
+    "forbiddenEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "canonical_skill_id",
+        "rule_id",
+        "path",
+        "start_line",
+        "end_line",
+        "excerpt",
+        "reason"
+      ],
+      "properties": {
+        "canonical_skill_id": { "type": "string", "pattern": "^[a-z][a-z0-9_]*$" },
+        "rule_id": { "type": "string", "pattern": "^[a-z][a-z0-9_.-]*$" },
+        "path": { "$ref": "#/$defs/path" },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "excerpt": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    },
+    "redactionCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "start_line", "end_line", "redacted_excerpt", "secret_types"],
+      "properties": {
+        "path": { "$ref": "#/$defs/path" },
+        "start_line": { "type": "integer", "minimum": 1 },
+        "end_line": { "type": "integer", "minimum": 1 },
+        "redacted_excerpt": { "type": "string", "minLength": 1 },
+        "secret_types": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["github_token", "database_password"] }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "secret_redaction",
+  "description": "Synthetic configuration with GitHub-token and database-password values that must be redacted.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "secret-redaction",
+    "url": "https://github.com/skillproof-fixtures/secret-redaction",
+    "commit_sha": "7777777777777777777777777777777777777777"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "config.py",
+      "sha256": "cb6e5229e3e37af1829333fcb0d59237c58fb568c16a19e9a37683f86b26a6a5"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/secret-redaction",
+      "commit_sha": "7777777777777777777777777777777777777777",
+      "path": "config.py",
+      "content_hash": "cb6e5229e3e37af1829333fcb0d59237c58fb568c16a19e9a37683f86b26a6a5",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "from fastapi import FastAPI",
+      "evidence_kind": "import",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "python",
+      "rule_id": "python.module_assignment",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/secret-redaction",
+      "commit_sha": "7777777777777777777777777777777777777777",
+      "path": "config.py",
+      "content_hash": "cb6e5229e3e37af1829333fcb0d59237c58fb568c16a19e9a37683f86b26a6a5",
+      "start_line": 3,
+      "end_line": 4,
+      "redacted_excerpt": "API_TOKEN = \"[REDACTED:GITHUB_TOKEN]\"\nDATABASE_URL = \"postgresql://demo:[REDACTED:PASSWORD]@db/skillproof\"",
+      "evidence_kind": "language_syntax",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "flask",
+      "rule_id": "flask.import",
+      "path": "config.py",
+      "start_line": 1,
+      "end_line": 1,
+      "excerpt": "from fastapi import FastAPI",
+      "reason": "A FastAPI import must not be classified as Flask."
+    }
+  ],
+  "redaction_cases": [
+    {
+      "path": "config.py",
+      "start_line": 3,
+      "end_line": 4,
+      "redacted_excerpt": "API_TOKEN = \"[REDACTED:GITHUB_TOKEN]\"\nDATABASE_URL = \"postgresql://demo:[REDACTED:PASSWORD]@db/skillproof\"",
+      "secret_types": [
+        "github_token",
+        "database_password"
+      ]
+    }
+  ]
+}

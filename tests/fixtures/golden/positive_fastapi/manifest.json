@@ -1,0 +1,125 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "positive_fastapi",
+  "description": "FastAPI application with a route, dependency injection, and a Pytest test.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "positive-fastapi",
+    "url": "https://github.com/skillproof-fixtures/positive-fastapi",
+    "commit_sha": "1111111111111111111111111111111111111111"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "62aaa05306f51e1a432517bbeb3b0deaaac282f3e3e10e05888d8ebf05ac414c"
+    },
+    {
+      "path": "app/main.py",
+      "sha256": "ef12e4c75a1dbc72c641ca357a9a983339b5557dc0fb14f17c58366e54231c0c"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "495e2ce4a7f9220ec46f83ed55a1d87c81fb6107a3c2ea41abef900296d1bc96"
+    },
+    {
+      "path": "tests/test_main.py",
+      "sha256": "296b0ce33d3a3e47524f96376aa01d6c13bf3694e17951bad42b5c2bc8492bb4"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "python",
+      "rule_id": "python.import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-fastapi",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "app/main.py",
+      "content_hash": "ef12e4c75a1dbc72c641ca357a9a983339b5557dc0fb14f17c58366e54231c0c",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "from fastapi import Depends, FastAPI",
+      "evidence_kind": "import",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.manifest_dependency",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-fastapi",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "pyproject.toml",
+      "content_hash": "495e2ce4a7f9220ec46f83ed55a1d87c81fb6107a3c2ea41abef900296d1bc96",
+      "start_line": 5,
+      "end_line": 5,
+      "redacted_excerpt": "  \"fastapi==0.115.0\",",
+      "evidence_kind": "manifest_dependency",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.route_decorator",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-fastapi",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "app/main.py",
+      "content_hash": "ef12e4c75a1dbc72c641ca357a9a983339b5557dc0fb14f17c58366e54231c0c",
+      "start_line": 8,
+      "end_line": 9,
+      "redacted_excerpt": "@app.get(\"/health\")\ndef health(user: str = Depends(current_user)) -> dict[str, str]:",
+      "evidence_kind": "route",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "pytest",
+      "rule_id": "pytest.test_function",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-fastapi",
+      "commit_sha": "1111111111111111111111111111111111111111",
+      "path": "tests/test_main.py",
+      "content_hash": "296b0ce33d3a3e47524f96376aa01d6c13bf3694e17951bad42b5c2bc8492bb4",
+      "start_line": 7,
+      "end_line": 9,
+      "redacted_excerpt": "def test_health() -> None:\n    response = client.get(\"/health\")\n    assert response.status_code == 200",
+      "evidence_kind": "test",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.documentation_reference",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "This backend fixture intentionally contains no React implementation.",
+      "reason": "A negated README mention must not create React evidence."
+    },
+    {
+      "canonical_skill_id": "flask",
+      "rule_id": "flask.import",
+      "path": "app/main.py",
+      "start_line": 1,
+      "end_line": 1,
+      "excerpt": "from fastapi import Depends, FastAPI",
+      "reason": "A FastAPI import must not be misclassified as Flask."
+    }
+  ]
+}

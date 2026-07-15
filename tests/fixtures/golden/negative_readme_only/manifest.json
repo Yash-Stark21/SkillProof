@@ -1,0 +1,83 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "negative_readme_only",
+  "description": "Python module whose only FastAPI signal is a future-looking README mention.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "negative-readme-only",
+    "url": "https://github.com/skillproof-fixtures/negative-readme-only",
+    "commit_sha": "2222222222222222222222222222222222222222"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "d18457bb0a1bdf5ab2c385e20cdd5b75c6643e543410a4784b016d9655cdddbf"
+    },
+    {
+      "path": "src/report.py",
+      "sha256": "e8eb0bc4e2fc978b69ca134adc1324d5ad20a292de22f8a27caa981c6307ed6a"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.documentation_reference",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/negative-readme-only",
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "path": "README.md",
+      "content_hash": "d18457bb0a1bdf5ab2c385e20cdd5b75c6643e543410a4784b016d9655cdddbf",
+      "start_line": 3,
+      "end_line": 3,
+      "redacted_excerpt": "We may rewrite this Python service with FastAPI someday.",
+      "evidence_kind": "documentation_reference",
+      "confidence": "low",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": false
+    },
+    {
+      "canonical_skill_id": "python",
+      "rule_id": "python.typed_function",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/negative-readme-only",
+      "commit_sha": "2222222222222222222222222222222222222222",
+      "path": "src/report.py",
+      "content_hash": "e8eb0bc4e2fc978b69ca134adc1324d5ad20a292de22f8a27caa981c6307ed6a",
+      "start_line": 1,
+      "end_line": 2,
+      "redacted_excerpt": "def build_report(items: list[str]) -> str:\n    return \", \".join(items)",
+      "evidence_kind": "language_syntax",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.import",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "We may rewrite this Python service with FastAPI someday.",
+      "reason": "Documentation does not prove a FastAPI import."
+    },
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.manifest_dependency",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "We may rewrite this Python service with FastAPI someday.",
+      "reason": "Documentation does not prove an installed FastAPI dependency."
+    }
+  ]
+}

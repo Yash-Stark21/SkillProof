@@ -1,0 +1,146 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "positive_react_typescript",
+  "description": "React and TypeScript component configured with Vite and tested with Vitest.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "positive-react-typescript",
+    "url": "https://github.com/skillproof-fixtures/positive-react-typescript",
+    "commit_sha": "3333333333333333333333333333333333333333"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "8273e1d89f2000aeab87f7c237e8cb3f7791ac9c82148f65147c7eb87b03610e"
+    },
+    {
+      "path": "package.json",
+      "sha256": "0405798ba2b314ed198741cd858213d115c1f7dcc00ca9b199a852a137cbca13"
+    },
+    {
+      "path": "src/Counter.tsx",
+      "sha256": "894a08fca38a7d15a36263920673b1a6bff863ad98327f12e3e2c3fce5cacf57"
+    },
+    {
+      "path": "tests/Counter.test.tsx",
+      "sha256": "f0b05d7f62d0065ab415475fe0440be03b7c65da751ddfb249aa6e9f17c45199"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "eca485c281977125366d4800553256e419f364984e615f75a2d2bae54f7857fd"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "typescript",
+      "rule_id": "typescript.manifest_dependency",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-react-typescript",
+      "commit_sha": "3333333333333333333333333333333333333333",
+      "path": "package.json",
+      "content_hash": "0405798ba2b314ed198741cd858213d115c1f7dcc00ca9b199a852a137cbca13",
+      "start_line": 13,
+      "end_line": 13,
+      "redacted_excerpt": "    \"typescript\": \"5.6.2\",",
+      "evidence_kind": "manifest_dependency",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.manifest_dependency",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-react-typescript",
+      "commit_sha": "3333333333333333333333333333333333333333",
+      "path": "package.json",
+      "content_hash": "0405798ba2b314ed198741cd858213d115c1f7dcc00ca9b199a852a137cbca13",
+      "start_line": 8,
+      "end_line": 8,
+      "redacted_excerpt": "    \"react\": \"18.3.1\",",
+      "evidence_kind": "manifest_dependency",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.state_hook",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-react-typescript",
+      "commit_sha": "3333333333333333333333333333333333333333",
+      "path": "src/Counter.tsx",
+      "content_hash": "894a08fca38a7d15a36263920673b1a6bff863ad98327f12e3e2c3fce5cacf57",
+      "start_line": 1,
+      "end_line": 4,
+      "redacted_excerpt": "import { useState } from \"react\";\n\nexport function Counter(): JSX.Element {\n  const [count, setCount] = useState(0);",
+      "evidence_kind": "hook",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "vite",
+      "rule_id": "vite.config_import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-react-typescript",
+      "commit_sha": "3333333333333333333333333333333333333333",
+      "path": "vite.config.ts",
+      "content_hash": "eca485c281977125366d4800553256e419f364984e615f75a2d2bae54f7857fd",
+      "start_line": 1,
+      "end_line": 2,
+      "redacted_excerpt": "import { defineConfig } from \"vite\";\nimport react from \"@vitejs/plugin-react\";",
+      "evidence_kind": "configuration",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "vitest",
+      "rule_id": "vitest.test_import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/positive-react-typescript",
+      "commit_sha": "3333333333333333333333333333333333333333",
+      "path": "tests/Counter.test.tsx",
+      "content_hash": "f0b05d7f62d0065ab415475fe0440be03b7c65da751ddfb249aa6e9f17c45199",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "import { describe, expect, it } from \"vitest\";",
+      "evidence_kind": "test",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.documentation_reference",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "This browser-only fixture intentionally contains no FastAPI backend.",
+      "reason": "A negated README mention must not create FastAPI evidence."
+    },
+    {
+      "canonical_skill_id": "pytest",
+      "rule_id": "pytest.test_function",
+      "path": "tests/Counter.test.tsx",
+      "start_line": 5,
+      "end_line": 8,
+      "excerpt": "describe(\"Counter\", () => {\n  it(\"exports a component\", () => {\n    expect(Counter).toBeDefined();\n  });",
+      "reason": "A Vitest test must not be classified as Pytest."
+    }
+  ]
+}

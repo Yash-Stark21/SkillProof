@@ -1,0 +1,188 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "mixed_fullstack",
+  "description": "Complete FastAPI and React full-stack repository covering every initial detector family.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "mixed-fullstack",
+    "url": "https://github.com/skillproof-fixtures/mixed-fullstack",
+    "commit_sha": "5555555555555555555555555555555555555555"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "backend/app/main.py",
+      "sha256": "ca077c6ce7966ffc97ef49e51bbb4f0fd2d3af1b7533bc6bd5e6bad8d201f2d9"
+    },
+    {
+      "path": "backend/pyproject.toml",
+      "sha256": "28e064e546fe45f14d4ae450c89a9c97adb1d8e6a4ca029621f619fd3d137992"
+    },
+    {
+      "path": "backend/tests/test_profile.py",
+      "sha256": "a4dd01b9aa215169e65d17486bce8837d9a7f4b6f5cce19e13689884b01eacaa"
+    },
+    {
+      "path": "frontend/package.json",
+      "sha256": "95f109deb275cef69334aba0e748ddce7c60a461f92e91cc0d9393f5db1572e2"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "31d76027c48c687876033a82cb5cf0636f7c43afce5515e10e6a44f6817faed8"
+    },
+    {
+      "path": "frontend/tests/App.test.tsx",
+      "sha256": "da6c3fe1bd9beb6e791b7753858e1731b2c10bb54e0738d9dafc9ad7f6b967f4"
+    },
+    {
+      "path": "frontend/vite.config.ts",
+      "sha256": "534dea9c0c2b339dd283bdf9bd5fba8962195d65a01e35c247ebf2230dce5cbe"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.route_decorator",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "backend/app/main.py",
+      "content_hash": "ca077c6ce7966ffc97ef49e51bbb4f0fd2d3af1b7533bc6bd5e6bad8d201f2d9",
+      "start_line": 5,
+      "end_line": 6,
+      "redacted_excerpt": "@app.get(\"/api/profile\")\ndef profile() -> dict[str, str]:",
+      "evidence_kind": "route",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "pytest",
+      "rule_id": "pytest.test_function",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "backend/tests/test_profile.py",
+      "content_hash": "a4dd01b9aa215169e65d17486bce8837d9a7f4b6f5cce19e13689884b01eacaa",
+      "start_line": 3,
+      "end_line": 4,
+      "redacted_excerpt": "def test_profile() -> None:\n    assert profile()[\"name\"] == \"Ada\"",
+      "evidence_kind": "test",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "python",
+      "rule_id": "python.import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "backend/app/main.py",
+      "content_hash": "ca077c6ce7966ffc97ef49e51bbb4f0fd2d3af1b7533bc6bd5e6bad8d201f2d9",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "from fastapi import FastAPI",
+      "evidence_kind": "import",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.hook_import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "frontend/src/App.tsx",
+      "content_hash": "31d76027c48c687876033a82cb5cf0636f7c43afce5515e10e6a44f6817faed8",
+      "start_line": 1,
+      "end_line": 4,
+      "redacted_excerpt": "import { useEffect, useState } from \"react\";\n\nexport function App(): JSX.Element {\n  const [name, setName] = useState(\"loading\");",
+      "evidence_kind": "hook",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "typescript",
+      "rule_id": "typescript.manifest_dependency",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "frontend/package.json",
+      "content_hash": "95f109deb275cef69334aba0e748ddce7c60a461f92e91cc0d9393f5db1572e2",
+      "start_line": 7,
+      "end_line": 7,
+      "redacted_excerpt": "    \"typescript\": \"5.6.2\",",
+      "evidence_kind": "manifest_dependency",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "vite",
+      "rule_id": "vite.config_import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "frontend/vite.config.ts",
+      "content_hash": "534dea9c0c2b339dd283bdf9bd5fba8962195d65a01e35c247ebf2230dce5cbe",
+      "start_line": 1,
+      "end_line": 4,
+      "redacted_excerpt": "import { defineConfig } from \"vite\";\n\nexport default defineConfig({\n  server: { port: 4173 },",
+      "evidence_kind": "configuration",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "vitest",
+      "rule_id": "vitest.test_import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/mixed-fullstack",
+      "commit_sha": "5555555555555555555555555555555555555555",
+      "path": "frontend/tests/App.test.tsx",
+      "content_hash": "da6c3fe1bd9beb6e791b7753858e1731b2c10bb54e0738d9dafc9ad7f6b967f4",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "import { expect, it } from \"vitest\";",
+      "evidence_kind": "test",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "flask",
+      "rule_id": "flask.import",
+      "path": "backend/app/main.py",
+      "start_line": 1,
+      "end_line": 1,
+      "excerpt": "from fastapi import FastAPI",
+      "reason": "A FastAPI import must not be classified as Flask."
+    },
+    {
+      "canonical_skill_id": "jest",
+      "rule_id": "jest.test_import",
+      "path": "frontend/tests/App.test.tsx",
+      "start_line": 1,
+      "end_line": 1,
+      "excerpt": "import { expect, it } from \"vitest\";",
+      "reason": "A Vitest import must not be classified as Jest."
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "contract_version": "0.1",
+  "scenarios": {
+    "unsupported_claim_rejection": {
+      "id": "unsupported_claim_rejection",
+      "claim": {
+        "id": "claim-unsupported",
+        "text": "Built a production FastAPI service.",
+        "evidence_ids": [
+          "evidence-readme-fastapi"
+        ]
+      },
+      "available_evidence": [
+        {
+          "id": "evidence-readme-fastapi",
+          "confidence": "low",
+          "claim_eligible": false
+        }
+      ],
+      "expected": {
+        "accepted": false,
+        "error_code": "CLAIM_QUALIFYING_EVIDENCE_REQUIRED"
+      }
+    },
+    "final_evidence_deletion": {
+      "id": "final_evidence_deletion",
+      "claim": {
+        "id": "claim-fastapi-route",
+        "text": "Implemented a FastAPI route.",
+        "evidence_ids": [
+          "evidence-fastapi-route"
+        ]
+      },
+      "available_evidence": [
+        {
+          "id": "evidence-fastapi-route",
+          "confidence": "high",
+          "claim_eligible": true
+        }
+      ],
+      "mutation": {
+        "delete_evidence_id": "evidence-fastapi-route"
+      },
+      "expected": {
+        "valid_before": true,
+        "valid_after": false,
+        "error_code": "CLAIM_QUALIFYING_EVIDENCE_REQUIRED"
+      }
+    },
+    "deterministic_rerun": {
+      "id": "deterministic_rerun",
+      "semantic_input": {
+        "repository": "github:skillproof-fixtures/mixed-fullstack",
+        "commit_sha": "5555555555555555555555555555555555555555",
+        "detector_version": "0.1.0",
+        "contract_version": "0.1"
+      },
+      "ignored_runtime_fields": [
+        "created_at",
+        "runtime_id"
+      ],
+      "run_a": [
+        {
+          "runtime_id": "evidence-run-a-1",
+          "created_at": "2026-07-15T09:00:00Z",
+          "canonical_skill_id": "fastapi",
+          "rule_id": "fastapi.route_decorator",
+          "path": "backend/app/main.py",
+          "start_line": 5,
+          "end_line": 6,
+          "confidence": "high"
+        },
+        {
+          "runtime_id": "evidence-run-a-2",
+          "created_at": "2026-07-15T09:00:01Z",
+          "canonical_skill_id": "react",
+          "rule_id": "react.hook_import",
+          "path": "frontend/src/App.tsx",
+          "start_line": 1,
+          "end_line": 4,
+          "confidence": "high"
+        }
+      ],
+      "run_b": [
+        {
+          "runtime_id": "evidence-run-b-9",
+          "created_at": "2026-07-15T10:30:01Z",
+          "canonical_skill_id": "react",
+          "rule_id": "react.hook_import",
+          "path": "frontend/src/App.tsx",
+          "start_line": 1,
+          "end_line": 4,
+          "confidence": "high"
+        },
+        {
+          "runtime_id": "evidence-run-b-8",
+          "created_at": "2026-07-15T10:30:00Z",
+          "canonical_skill_id": "fastapi",
+          "rule_id": "fastapi.route_decorator",
+          "path": "backend/app/main.py",
+          "start_line": 5,
+          "end_line": 6,
+          "confidence": "high"
+        }
+      ],
+      "expected": {
+        "semantic_outputs_equal": true
+      }
+    },
+    "independent_scores": {
+      "id": "independent_scores",
+      "baseline": {
+        "job_fit": 75,
+        "portfolio_quality": 42
+      },
+      "portfolio_only_change": {
+        "changed_inputs": [
+          "tests",
+          "documentation"
+        ],
+        "job_fit": 75,
+        "portfolio_quality": 80
+      },
+      "job_only_change": {
+        "changed_inputs": [
+          "required_skills"
+        ],
+        "job_fit": 50,
+        "portfolio_quality": 42
+      },
+      "expected": {
+        "job_fit_unchanged": true,
+        "portfolio_quality_changed": true,
+        "job_fit_changed": true,
+        "portfolio_quality_unchanged": true
+      }
+    }
+  }
+}

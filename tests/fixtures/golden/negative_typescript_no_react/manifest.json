@@ -1,0 +1,104 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "negative_typescript_no_react",
+  "description": "Typed utility library with no React dependency, import, component, or hook.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "negative-typescript-no-react",
+    "url": "https://github.com/skillproof-fixtures/negative-typescript-no-react",
+    "commit_sha": "4444444444444444444444444444444444444444"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "complete",
+    "reason": null
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "a3dbd80670f554689f877ad0d0a773607170fdd9fe5a5f124d67139b2f9da737"
+    },
+    {
+      "path": "package.json",
+      "sha256": "aa6a05496c0e5548e58caed7749267a66ab82a7198844548537f3b02d6c4d998"
+    },
+    {
+      "path": "src/format.ts",
+      "sha256": "a4d26040cd4477c4d56b4895b7a2006be0594bb5a0c996abab55f1b0de8e721f"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.documentation_reference",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/negative-typescript-no-react",
+      "commit_sha": "4444444444444444444444444444444444444444",
+      "path": "README.md",
+      "content_hash": "a3dbd80670f554689f877ad0d0a773607170fdd9fe5a5f124d67139b2f9da737",
+      "start_line": 3,
+      "end_line": 3,
+      "redacted_excerpt": "React is intentionally not used in this TypeScript library.",
+      "evidence_kind": "documentation_reference",
+      "confidence": "low",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": false
+    },
+    {
+      "canonical_skill_id": "typescript",
+      "rule_id": "typescript.manifest_dependency",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/negative-typescript-no-react",
+      "commit_sha": "4444444444444444444444444444444444444444",
+      "path": "package.json",
+      "content_hash": "aa6a05496c0e5548e58caed7749267a66ab82a7198844548537f3b02d6c4d998",
+      "start_line": 5,
+      "end_line": 5,
+      "redacted_excerpt": "    \"typescript\": \"5.6.2\"",
+      "evidence_kind": "manifest_dependency",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "typescript",
+      "rule_id": "typescript.typed_function",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/negative-typescript-no-react",
+      "commit_sha": "4444444444444444444444444444444444444444",
+      "path": "src/format.ts",
+      "content_hash": "a4d26040cd4477c4d56b4895b7a2006be0594bb5a0c996abab55f1b0de8e721f",
+      "start_line": 5,
+      "end_line": 6,
+      "redacted_excerpt": "export function formatProfile(profile: Profile): string {\n  return profile.name.toUpperCase();",
+      "evidence_kind": "language_syntax",
+      "confidence": "high",
+      "coverage_state": "complete",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.import",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "React is intentionally not used in this TypeScript library.",
+      "reason": "A README mention does not prove a React import."
+    },
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.manifest_dependency",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "React is intentionally not used in this TypeScript library.",
+      "reason": "React is not present in package.json; prose cannot create dependency evidence."
+    }
+  ]
+}

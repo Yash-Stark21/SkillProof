@@ -1,0 +1,83 @@
+{
+  "contract_version": "0.1",
+  "fixture_id": "partial_scan",
+  "description": "A bounded scan that found backend evidence before reaching its file-count limit.",
+  "repository": {
+    "provider": "github",
+    "owner": "skillproof-fixtures",
+    "name": "partial-scan",
+    "url": "https://github.com/skillproof-fixtures/partial-scan",
+    "commit_sha": "6666666666666666666666666666666666666666"
+  },
+  "detector_version": "0.1.0",
+  "coverage": {
+    "state": "partial",
+    "reason": "file_count_limit_reached: frontend/ was not scanned"
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "4eb7944acf600d6925ad87e69c039a99b76b63686ff898a4a94967fe05672a02"
+    },
+    {
+      "path": "app/main.py",
+      "sha256": "284f15e144f31009a6c495dd7c7d14475e834992e9f8714e81c9de22f4d7c37e"
+    }
+  ],
+  "expected_evidence": [
+    {
+      "canonical_skill_id": "fastapi",
+      "rule_id": "fastapi.route_decorator",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/partial-scan",
+      "commit_sha": "6666666666666666666666666666666666666666",
+      "path": "app/main.py",
+      "content_hash": "284f15e144f31009a6c495dd7c7d14475e834992e9f8714e81c9de22f4d7c37e",
+      "start_line": 5,
+      "end_line": 6,
+      "redacted_excerpt": "@app.get(\"/visible\")\ndef visible() -> dict[str, bool]:",
+      "evidence_kind": "route",
+      "confidence": "high",
+      "coverage_state": "partial",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    },
+    {
+      "canonical_skill_id": "python",
+      "rule_id": "python.import",
+      "detector_version": "0.1.0",
+      "repository": "github:skillproof-fixtures/partial-scan",
+      "commit_sha": "6666666666666666666666666666666666666666",
+      "path": "app/main.py",
+      "content_hash": "284f15e144f31009a6c495dd7c7d14475e834992e9f8714e81c9de22f4d7c37e",
+      "start_line": 1,
+      "end_line": 1,
+      "redacted_excerpt": "from fastapi import FastAPI",
+      "evidence_kind": "import",
+      "confidence": "high",
+      "coverage_state": "partial",
+      "created_at": "2026-07-15T00:00:00Z",
+      "claim_eligible": true
+    }
+  ],
+  "forbidden_evidence": [
+    {
+      "canonical_skill_id": "react",
+      "rule_id": "react.absence_from_partial_scan",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "The frontend directory was omitted after the configured file-count limit.",
+      "reason": "A partial scan may report React as not observed, but must not claim it is absent."
+    },
+    {
+      "canonical_skill_id": "vitest",
+      "rule_id": "vitest.absence_from_partial_scan",
+      "path": "README.md",
+      "start_line": 3,
+      "end_line": 3,
+      "excerpt": "The frontend directory was omitted after the configured file-count limit.",
+      "reason": "An omitted frontend prevents an absence conclusion for Vitest."
+    }
+  ]
+}
