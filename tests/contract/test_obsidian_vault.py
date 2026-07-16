@@ -241,12 +241,13 @@ class ObsidianVaultTests(unittest.TestCase):
                 self.assertIn("skillproof", properties["tags"])
 
         adr_notes = sorted((VAULT_ROOT / "adr").glob("ADR-*.md"))
-        self.assertEqual(len(adr_notes), 6)
+        self.assertEqual(len(adr_notes), 7)
         for index, path in enumerate(adr_notes, start=1):
             with self.subTest(adr=path.name):
                 properties = _frontmatter(path)
                 self.assertEqual(properties["type"], "adr")
-                self.assertEqual(properties["status"], "accepted")
+                expected_status = "superseded" if index == 1 else "accepted"
+                self.assertEqual(properties["status"], expected_status)
                 self.assertEqual(properties["adr_id"], f"ADR-{index:03d}")
 
     def test_all_wikilinks_resolve_inside_the_vault(self) -> None:

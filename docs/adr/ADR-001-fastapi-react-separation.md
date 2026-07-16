@@ -4,21 +4,22 @@ aliases:
   - "ADR-001"
   - "FastAPI and React separation"
 type: adr
-status: accepted
+status: superseded
 adr_id: ADR-001
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags: [skillproof, architecture, adr]
 ---
 
 # ADR-001: Separate the FastAPI API from the React client
 
-- **Status:** Accepted
+- **Status:** Superseded
 - **Date:** 2026-07-15
 - **Decision owners:** Product and technical lead
 - **Related requirements:** BR-01, BR-02, FR-01 through FR-08, NFR-05
+- **Superseded by:** [[adr/ADR-007-adopt-vue-javascript-client]]
 
 ## Context
 
@@ -63,6 +64,7 @@ The backend remains a modular monolith. The static frontend and API can be deplo
 
 - [[Home]]
 - [[MOCs/Engineering MOC]]
+- [[adr/ADR-007-adopt-vue-javascript-client]]
 - [[inception/DECISION_LOG]]
 - [[inception/ARCHITECTURE]]
 - [[inception/API_CONTRACT]]

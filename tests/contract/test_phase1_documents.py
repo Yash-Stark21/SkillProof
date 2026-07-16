@@ -33,6 +33,7 @@ EXPECTED_ADRS = {
     "ADR-004-separate-product-scores.md",
     "ADR-005-in-process-v1-scanning.md",
     "ADR-006-defer-auth-workers-microservices.md",
+    "ADR-007-adopt-vue-javascript-client.md",
 }
 EXPECTED_ENDPOINTS = {
     "POST /api/v1/scans",
@@ -118,11 +119,16 @@ class PhaseOneDocumentTests(unittest.TestCase):
         decisions = _read(INCEPTION_ROOT / "DECISION_LOG.md")
         self.assertEqual(
             set(re.findall(r"`D-(\d{3})`", decisions)),
-            {f"{index:03d}" for index in range(1, 19)},
+            {f"{index:03d}" for index in range(1, 20)},
         )
         for adr_path in ADR_ROOT.glob("ADR-*.md"):
             with self.subTest(adr=adr_path.name):
-                self.assertIn("**Status:** Accepted", _read(adr_path))
+                expected_status = (
+                    "Superseded"
+                    if adr_path.name == "ADR-001-fastapi-react-separation.md"
+                    else "Accepted"
+                )
+                self.assertIn(f"**Status:** {expected_status}", _read(adr_path))
 
     def test_api_and_data_contracts_use_the_same_locked_values(self) -> None:
         requirements = _read(INCEPTION_ROOT / "REQUIREMENTS.md")

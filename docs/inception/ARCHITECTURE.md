@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -19,8 +19,8 @@ tags:
 # SkillProof Architecture
 
 **Status:** Accepted for MVP implementation  
-**Architecture version:** `0.1`  
-**Last updated:** 2026-07-15
+**Architecture version:** `0.2`<br>
+**Last updated:** 2026-07-16
 
 ## 1. Purpose and architectural drivers
 
@@ -43,7 +43,7 @@ The initial detector scope is Python, FastAPI, Pytest, TypeScript, React, Vite, 
 
 ```mermaid
 flowchart LR
-    User["Junior developer"] --> Web["React + TypeScript SPA"]
+    User["Junior developer"] --> Web["Vue 3 + JavaScript SPA"]
     Web -->|"JSON over /api/v1"| API["FastAPI modular monolith"]
     API -->|"Approved REST endpoints only"| GitHub["GitHub REST API"]
     API --> DB["PostgreSQL"]
@@ -58,7 +58,7 @@ SkillProof has two deployable application artifacts: a static frontend and one A
 
 | Component | Responsibility | Must not do |
 | --- | --- | --- |
-| React application | Repository submission, scan status, evidence inspection, job-skill correction, and report presentation | Hold GitHub credentials, infer proof, or calculate authoritative scores |
+| Vue application | Repository submission, scan status, evidence inspection, job-skill correction, and report presentation | Hold GitHub credentials, infer proof, or calculate authoritative scores |
 | HTTP API | Validate requests, enforce response contracts, create resources, authorize workflow transitions, and attach request IDs | Perform long GitHub scans inside an HTTP request |
 | Scan coordinator | Persist scan state, schedule work, reconcile interrupted v1 tasks, and expose progress | Share a request-scoped database session with a background task |
 | GitHub gateway | Resolve repository identity/default branch/commit, enumerate blobs, retrieve bounded text, and translate GitHub failures | Clone repositories, follow arbitrary URLs, or execute content |
@@ -154,20 +154,21 @@ Initial operational measures are:
 ## 9. Development and delivery topology
 
 - Local development uses Docker Compose for PostgreSQL and documented frontend/backend commands.
-- CI gates include backend linting, type checking, unit tests, integration/contract tests, Alembic upgrade validation, frontend lint/type/test/build, and the golden evidence regression suite.
+- CI gates include backend linting, type checking, unit tests, integration/contract tests, Alembic upgrade validation, frontend lint/component/runtime-contract/build checks, and the golden evidence regression suite.
 - Environments progress through development, CI/test, staging, and production. Configuration is environment-driven and secrets are injected, never committed.
-- The React build can be hosted as static assets independently from the API. Both artifacts are released from the same repository and compatible API version.
+- The Vue build can be hosted as static assets independently from the API. Both artifacts are released from the same repository and compatible API version.
 
 ## 10. Architecture decisions and deferred changes
 
 The governing decisions are recorded under `docs/adr`:
 
-- ADR-001: FastAPI API and React client separation.
+- ADR-001: original FastAPI API and React client separation, superseded for client technology.
 - ADR-002: Rule-based evidence detection before AI.
 - ADR-003: Commit-pinned evidence provenance.
 - ADR-004: Separate Job Fit and Portfolio Quality scores.
 - ADR-005: In-process background scanning for v1.
 - ADR-006: Authentication, durable workers, and microservices deferred.
+- ADR-007: Vue 3 and plain JavaScript client, preserving the separate SPA/API boundary.
 
 Move scanning to a durable worker only when measured scan volume, task duration, deployment interruption rate, or retry requirements make in-process loss unacceptable. Introduce authentication only with a user-owned/private-data use case. Split services only when independently scaled workloads or ownership boundaries are demonstrated.
 

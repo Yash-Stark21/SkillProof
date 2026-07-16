@@ -7,7 +7,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - engineering
@@ -34,6 +34,8 @@ Use this map when designing or reviewing implementation behavior.
 
 ## Engineering gates
 
+- [[guides/Vue Frontend Walkthrough|Vue Frontend Implementation Walkthrough]]
+- [[adr/ADR-007-adopt-vue-javascript-client|Vue and JavaScript Client Decision]]
 - [[inception/BACKLOG#3. Definition of Done|Definition of Done]]
 - [[inception/BACKLOG|Sprint 1 Engineering Slice]]
 - [[inception/RISK_REGISTER|Security and Reliability Risks]]

@@ -8,7 +8,7 @@ status: active
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -41,7 +41,7 @@ This directory is the implementation source of truth for SkillProof v1. Start wi
 Related sources:
 
 - The approved execution plan remains at project-root path `PHASE_1_INCEPTION_PLAN.md`; its completed outcome is recorded in this vault's Phase 1 exit report.
-- Accepted architecture decisions are under [`docs/adr`](../adr/ADR-001-fastapi-react-separation.md).
+- Architecture decisions, including the current Vue/JavaScript client decision, are indexed under [`docs/adr`](../adr/README.md).
 - The machine-readable schema remains at project-root path `schemas/evidence-contract-v0.1.schema.json`; its human-readable contract is indexed above.
 - Golden inputs are under `tests/fixtures/golden`.
 - Contract checks are under `tests/contract`.

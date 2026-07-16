@@ -8,7 +8,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - navigation
@@ -21,16 +21,17 @@ tags:
 > SkillProof turns public repository implementation evidence into explainable skill matches and career claims. **No evidence, no claim.**
 
 > [!success] Current delivery state
-> Phase 1 inception is complete with a controlled **GO to Sprint 1**. Start implementation with `SPK-01`, then follow `US-01` through `US-07`.
+> Phase 1 inception is complete with a controlled **GO to Sprint 1**. Frontend implementation now follows [[adr/ADR-007-adopt-vue-javascript-client|Vue 3 with plain JavaScript]]; continue the vertical slice through `US-01` to `US-07`.
 
 ## Start here
 
 1. Open [[MOCs/Project MOC|Project MOC]] for the complete knowledge map.
 2. Read [[inception/PHASE_1_EXIT_REPORT|Phase 1 Exit Report]] for the go/no-go evidence.
-3. Use [[inception/BACKLOG|Sprint 1 Backlog]] as the delivery source of truth.
-4. Follow [[guides/GitHub Repository Setup|GitHub Repository Setup]] to publish and govern the project safely.
-5. Consult [[inception/REQUIREMENTS|MVP Requirements]] and [[inception/EVIDENCE_CONTRACT|Evidence Contract 0.1]] before changing behavior.
-6. Read [[OBSIDIAN_GUIDE|Obsidian Guide]] before adding or reorganizing notes.
+3. Follow [[guides/Vue Frontend Walkthrough|Vue Frontend Walkthrough]] to review today's implementation.
+4. Use [[inception/BACKLOG|Sprint 1 Backlog]] as the delivery source of truth.
+5. Follow [[guides/GitHub Repository Setup|GitHub Repository Setup]] to publish and govern the project safely.
+6. Consult [[inception/REQUIREMENTS|MVP Requirements]] and [[inception/EVIDENCE_CONTRACT|Evidence Contract 0.1]] before changing behavior.
+7. Read [[OBSIDIAN_GUIDE|Obsidian Guide]] before adding or reorganizing notes.
 
 ## Knowledge map
 
@@ -69,6 +70,7 @@ flowchart TD
 - Data invariants: [[inception/DATA_MODEL]]
 - Architecture decisions: [[adr/README|ADR Index]]
 - Repository publication and governance: [[guides/GitHub Repository Setup]]
+- Frontend implementation walkthrough: [[guides/Vue Frontend Walkthrough]]
 
 ## Working notes
 

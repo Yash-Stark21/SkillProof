@@ -8,7 +8,7 @@ status: active
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags: [skillproof, architecture, adr]
 ---
 
@@ -20,12 +20,13 @@ This map is the entry point for SkillProof's Architecture Decision Records. ADRs
 
 | ID | Decision | Status | Primary concern |
 | --- | --- | --- | --- |
-| `ADR-001` | [[adr/ADR-001-fastapi-react-separation]] | Accepted | Client/API boundary |
+| `ADR-001` | [[adr/ADR-001-fastapi-react-separation]] | Superseded | Original client/API boundary and React/TypeScript choice |
 | `ADR-002` | [[adr/ADR-002-rule-based-detection-before-ai]] | Accepted | Deterministic evidence |
 | `ADR-003` | [[adr/ADR-003-commit-pinned-evidence]] | Accepted | Reproducible provenance |
 | `ADR-004` | [[adr/ADR-004-separate-product-scores]] | Accepted | Score semantics |
 | `ADR-005` | [[adr/ADR-005-in-process-v1-scanning]] | Accepted | Background execution |
 | `ADR-006` | [[adr/ADR-006-defer-auth-workers-microservices]] | Accepted | MVP architecture boundary |
+| `ADR-007` | [[adr/ADR-007-adopt-vue-javascript-client]] | Accepted | Vue/plain-JavaScript client stack |
 
 ## Lifecycle and statuses
 

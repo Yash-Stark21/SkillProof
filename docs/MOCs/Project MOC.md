@@ -7,7 +7,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - navigation
@@ -22,6 +22,7 @@ This map connects the stable product, engineering, and delivery sources of truth
 
 - Product state: [[inception/PHASE_1_EXIT_REPORT|Phase 1 complete — GO to Sprint 1]]
 - Active delivery plan: [[inception/BACKLOG|Sprint 1 vertical slice]]
+- Current frontend decision: [[adr/ADR-007-adopt-vue-javascript-client|Vue 3 with plain JavaScript]]
 - Repository setup: [[guides/GitHub Repository Setup|Publication and governance runbook]]
 - Governing invariant: [[inception/EVIDENCE_CONTRACT#Confidence and claim eligibility|No evidence, no claim]]
 - Documentation conventions: [[OBSIDIAN_GUIDE]]

@@ -3,7 +3,7 @@
 **Target file:** `PHASE_1_INCEPTION_PLAN.md`  
 **Duration:** 5 working days  
 **Delivery model:** Solo developer  
-**Project type:** Greenfield Python/FastAPI and React/TypeScript application
+**Project type:** Greenfield Python/FastAPI and Vue/JavaScript application
 
 ## Summary
 
@@ -130,18 +130,18 @@ Each fixture must contain expected evidence, forbidden evidence, exact paths and
 
 Approve a modular-monolith architecture:
 
-- React, TypeScript, and Vite frontend.
+- Vue 3, plain JavaScript, and Vite frontend.
 - FastAPI and Pydantic API.
 - Async HTTPX GitHub client.
 - PostgreSQL with SQLAlchemy async sessions.
 - Alembic migrations.
 - Background scan execution without Redis or Celery for v1.
 - Docker Compose for local development.
-- CI for linting, types, tests, migrations, and frontend builds.
+- CI for backend types, tests, migrations, and frontend lint/runtime-contract/test/build gates.
 
 Record architecture decisions for:
 
-- FastAPI and React separation.
+- FastAPI and Vue client separation.
 - Rule-based detection before AI.
 - Commit-pinned evidence.
 - Separate product scores.

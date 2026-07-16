@@ -8,7 +8,7 @@ status: ready
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -19,7 +19,7 @@ tags:
 # SkillProof Product Backlog and Sprint 1 Plan
 
 **Status:** Accepted for implementation  
-**Backlog baseline:** `0.1`  
+**Backlog baseline:** `0.2`<br>
 **Delivery model:** Solo developer, Agile iterative-incremental  
 **Initial sprint length:** 10 working days
 
@@ -58,7 +58,7 @@ Every Sprint 1 story below satisfies this checklist and is marked **Ready**.
 A story is done only when:
 
 - all acceptance criteria and mapped critical-rule tests pass;
-- backend/frontend linting and type checks pass where affected;
+- backend linting/type checks and frontend linting/runtime-contract checks pass where affected;
 - unit tests cover domain behavior and integration/contract tests cover database or GitHub boundaries;
 - the golden evidence suite has no unexpected or forbidden evidence;
 - OpenAPI and documentation reflect public behavior;
@@ -83,7 +83,7 @@ A story is done only when:
 
 ### Sprint goal
 
-A user submits a public GitHub URL and receives a pollable scan that is pinned to one commit, safely inspects bounded content, detects Python/FastAPI/Pytest evidence, and displays exact evidence in the React UI with honest complete/partial coverage.
+A user submits a public GitHub URL and receives a pollable scan that is pinned to one commit, safely inspects bounded content, detects Python/FastAPI/Pytest evidence, and displays exact evidence in the Vue UI with honest complete/partial coverage.
 
 The deterministic demonstration uses the `positive_fastapi` golden fixture through the same GitHub gateway interface and application/API/UI path. GitHub gateway contract tests use recorded synthetic HTTP responses; an optional live public-repository smoke validates environment connectivity but is not a CI or acceptance dependency.
 
@@ -105,9 +105,9 @@ Only the minimum migration, runtime, and UI shell needed for this vertical outco
 - **User story:** As a junior developer, I want to submit a public GitHub repository and receive a stable scan ID so I can follow its analysis.
 - **Business value:** Establishes the entry point and persisted workflow root for all evidence.
 - **Mapped requirements:** BR-03; FR-01, FR-02; NFR-05, NFR-06, NFR-07.
-- **Dependencies:** Accepted API contract, data model, ADR-001, ADR-003, ADR-005; no prior story.
-- **Implementation notes:** Create only the walking FastAPI/React/PostgreSQL structure needed for `POST /scans`, `GET /scans/{id}`, standard errors/request IDs, and the first Alembic migration. Normalize URLs before repository upsert. Commit the queued scan before scheduling its task.
-- **Interface/data impact:** Scan create/read endpoints; `repositories` and `scans`; React submission form may initially show the returned ID/status.
+- **Dependencies:** Accepted API contract, data model, ADR-003, ADR-005, and ADR-007; no prior story.
+- **Implementation notes:** Create only the walking FastAPI/Vue/PostgreSQL structure needed for `POST /scans`, `GET /scans/{id}`, standard errors/request IDs, and the first Alembic migration. Normalize URLs before repository upsert. Commit the queued scan before scheduling its task.
+- **Interface/data impact:** Scan create/read endpoints; `repositories` and `scans`; Vue submission form may initially show the returned ID/status.
 - **Security impact:** Reject credentials, query/fragment, arbitrary hosts, IPs, and GitHub subpaths. Do not fetch during synchronous validation.
 
 Acceptance criteria:
@@ -210,14 +210,14 @@ Planned tests:
 
 Demonstration: open a FastAPI skill and trace rule → excerpt/lines → file hash → commit.
 
-### US-05 — Complete the basic React evidence journey
+### US-05 — Complete the basic Vue evidence journey
 
 - **Status / estimate / priority:** Ready / 0.75 ideal day / P0
 - **User story:** As a junior developer, I want to submit, follow, and inspect a repository scan in one understandable screen.
 - **Business value:** Converts backend capability into the first demonstrable vertical product increment.
 - **Mapped requirements:** BR-01, BR-03, BR-04; FR-01..04; NFR-05, NFR-07.
 - **Dependencies:** US-01 and API shapes fixed; integrates completed US-02 through US-04 behavior.
-- **Implementation notes:** Build the minimal Vite/React/TypeScript page with URL form, status polling using `Retry-After`, safe failure state, coverage banner, and evidence list/detail. Use generated or contract-checked types. Do not calculate eligibility in the browser.
+- **Implementation notes:** Build the minimal Vite/Vue/JavaScript page with URL form, status polling using `Retry-After`, safe failure state, coverage banner, and evidence list/detail. Validate representative API fixtures at runtime. Do not calculate eligibility in the browser.
 - **Interface/data impact:** No API/data change; UI route `/` is sufficient for Sprint 1.
 - **Security impact:** No GitHub token in client state; source excerpts render as text, not HTML; safe API messages only.
 
@@ -231,8 +231,8 @@ Acceptance criteria:
 
 Planned tests:
 
-- Vitest/React Testing Library tests for form, polling, terminal states, partial banner, failure/request ID, and plain-text excerpt.
-- Type/contract test against representative API fixtures.
+- Vitest/Vue Test Utils tests for form, polling, terminal states, partial banner, failure/request ID, and plain-text excerpt.
+- Runtime contract tests against representative API fixtures and unknown enum values.
 - One Playwright path using the deterministic GitHub gateway: submit → poll → inspect evidence.
 - Basic accessibility assertions for form labels, status announcements, focus, and evidence disclosure.
 
@@ -274,7 +274,7 @@ Demonstration: scan the partial and secret fixtures, inspect explicit reasons, a
 - **Business value:** Makes the first slice repeatable, reviewable, and safe to extend.
 - **Mapped requirements:** BR-01..04; FR-01..04; NFR-03..07.
 - **Dependencies:** Starts with US-01 and evolves alongside every Sprint 1 story; final acceptance depends on US-02 through US-06.
-- **Implementation notes:** Configure backend lint/types/tests, PostgreSQL integration tests, migration upgrade validation, frontend lint/types/tests/build, golden suite, and one deterministic Playwright flow. Live GitHub calls are excluded from required CI.
+- **Implementation notes:** Configure backend lint/types/tests, PostgreSQL integration tests, migration upgrade validation, frontend lint/runtime-contract/tests/build, golden suite, and one deterministic Playwright flow. Live GitHub calls are excluded from required CI.
 - **Interface/data impact:** None beyond contract snapshot and migration history.
 - **Security impact:** CI secret scanning/dependency checks may be advisory in Sprint 1 but redaction and seeded-secret non-disclosure tests are blocking.
 
@@ -290,7 +290,7 @@ Planned tests:
 
 - CI workflow self-validation through the actual configured jobs.
 - Alembic empty-database upgrade and schema smoke test.
-- OpenAPI snapshot/compatibility test and generated client type check.
+- OpenAPI snapshot/compatibility test and representative frontend runtime-contract checks.
 - Golden manifest runner and Playwright path.
 - Artifact/log secret scan for the seeded value.
 
@@ -307,7 +307,7 @@ Recommended implementation order by working day:
 | 4 | US-03 initial deterministic detector rules |
 | 5 | US-04 evidence persistence and API |
 | 6 | US-06 scan policy, partial coverage, redaction |
-| 7 | US-05 integrated React journey |
+| 7 | US-05 integrated Vue journey |
 | 8 | US-07 full CI/migration/E2E gate |
 | 9 | Integration fixes, accessibility/security review, documentation |
 | 10 | Regression, staging demonstration, sprint review/retrospective |
@@ -316,7 +316,7 @@ Sprint 1 exits only when:
 
 - all seven stories meet the Definition of Done;
 - the `positive_fastapi`, `negative_readme_only`, `partial_scan`, and `secret_redaction` fixture assertions pass;
-- the React journey displays exact commit/file/line evidence;
+- the Vue journey displays exact commit/file/line evidence;
 - process interruption and GitHub failure states are explicit;
 - complete and partial coverage are visibly different;
 - seeded secrets appear nowhere outside the fixture source; and

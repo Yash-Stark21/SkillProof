@@ -8,7 +8,7 @@ status: complete
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -23,6 +23,9 @@ tags:
 **Owner:** Solo developer  
 **Decision:** **GO — enter Sprint 1**  
 **Production features built:** None, by design
+
+> [!note] Post-exit implementation amendment
+> On 2026-07-16, `D-019` and [[adr/ADR-007-adopt-vue-javascript-client]] replaced the planned React/TypeScript product client with Vue 3 and plain JavaScript. Historical Phase 1 statements below remain as exit evidence; React and TypeScript also remain detector targets.
 
 ## 1. Executive decision
 

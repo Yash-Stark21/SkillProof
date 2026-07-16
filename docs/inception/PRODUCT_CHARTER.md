@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -23,7 +23,7 @@ tags:
 | Status | Approved baseline for Phase 1 |
 | Product stage | Greenfield MVP |
 | Delivery model | Solo developer using an Agile iterative-incremental lifecycle |
-| Primary stack | Python/FastAPI API, React/TypeScript/Vite UI, PostgreSQL |
+| Primary stack | Python/FastAPI API, Vue 3/JavaScript/Vite UI, PostgreSQL |
 | Governing rule | **No evidence, no claim.** |
 
 ## Product vision
@@ -79,7 +79,7 @@ The secondary user reviews a report supplied by the applicant. They need concise
 - Job-description parsing, required/preferred classification, and user correction.
 - Explainable matching and separate Job Fit and Portfolio Quality scores.
 - Evidence-backed resume or interview claims.
-- A React/TypeScript/Vite interface, FastAPI API, and PostgreSQL persistence in one modular monolith.
+- A Vue 3/JavaScript/Vite interface, FastAPI API, and PostgreSQL persistence in one modular monolith.
 - Automated tests, versioned database migrations, local Docker Compose, and CI as delivery infrastructure.
 
 ### Excluded from v1

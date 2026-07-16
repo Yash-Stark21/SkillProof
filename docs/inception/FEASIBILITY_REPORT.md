@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -22,6 +22,9 @@ tags:
 **Assessment date:** 2026-07-15  
 **Owner:** Solo developer  
 **Decision:** Proceed to Sprint 1
+
+> [!note] Post-assessment implementation amendment
+> ADR-007 and `D-019` replace the product client's React/TypeScript choice with Vue 3 and plain JavaScript. The feasibility findings and React/TypeScript detector spike remain valid.
 
 ## 1. Assessment boundary
 

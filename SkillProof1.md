@@ -209,7 +209,7 @@ Important ADRs:
 
 ```text
 ADR-001: Why FastAPI instead of Flask
-ADR-002: Why React is separated from the API
+ADR-002: Why the Vue client is separated from the API
 ADR-003: Why rule-based detection precedes AI
 ADR-004: Why job fit and repository quality are separate scores
 ADR-005: Why every scan is pinned to a commit
@@ -449,7 +449,7 @@ The team asks:
 | Business analyst  | Defines requirements and workflows             |
 | Technical lead    | Owns architecture and major trade-offs         |
 | Backend engineer  | Builds FastAPI, database and analysis engine   |
-| Frontend engineer | Builds React workflow and report interface     |
+| Frontend engineer | Builds Vue workflow and report interface       |
 | QA/SDET           | Designs regression, integration and E2E tests  |
 | DevOps engineer   | Owns CI/CD, environments and observability     |
 | Security reviewer | Reviews tokens, input limits and data exposure |

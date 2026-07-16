@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - inception
@@ -20,8 +20,8 @@ tags:
 
 | Field | Value |
 | --- | --- |
-| Baseline status | Approved for Sprint 1 entry |
-| Decision date | 2026-07-15 |
+| Baseline status | Approved for Sprint 1 entry; frontend stack amended before implementation |
+| Decision date | 2026-07-15; latest amendment 2026-07-16 |
 | Decision owner | Solo developer acting as product owner and technical lead |
 | Change policy | Preserve an existing ID; record a dated superseding decision and, for architecture changes, an accepted superseding ADR |
 
@@ -35,7 +35,7 @@ These decisions turn the Phase 1 plan into implementation constraints. `D-*` ent
 | `D-002` | **Use an Agile iterative-incremental SDLC with lightweight Scrum/Scrumban, shift-left testing, risk spikes, and vertical increments.** | Detector accuracy, GitHub behavior, and scoring need evidence-driven refinement; each sprint must end in a testable demonstration rather than isolated technical layers. | `SkillProof1.md`, [backlog](BACKLOG.md) |
 | `D-003` | **Treat SkillProof as a greenfield product delivered by one developer wearing all product, architecture, engineering, QA, security, and DevOps roles.** | There is no legacy runtime, data, or compatibility contract to preserve. Operational complexity must remain manageable by one owner, while all database changes still use versioned migrations from the first schema. | [Product charter](PRODUCT_CHARTER.md), [architecture](ARCHITECTURE.md) |
 | `D-004` | **Serve a junior developer/job applicant first and a recruiter, mentor, or interviewer second through one public-repository workflow.** | The MVP optimizes repository submission → evidence inspection → corrected job comparison → supported career output. Secondary reviewers inspect proof; accounts and collaboration are not required. | [Product charter](PRODUCT_CHARTER.md) |
-| `D-005` | **Build one modular monolith with a separate FastAPI/Pydantic JSON API and React/TypeScript/Vite SPA in one repository.** PostgreSQL is the system of record; HTTPX is the async GitHub client; SQLAlchemy async sessions and Alembic provide persistence; Docker Compose and CI support delivery. | The separation creates a typed, independently testable `/api/v1` boundary without distributed domain services. FastAPI owns authoritative evidence/scoring decisions; React owns interaction and presentation only. | [ADR-001](../adr/ADR-001-fastapi-react-separation.md), [architecture](ARCHITECTURE.md) |
+| `D-005` | **Build one modular monolith with a separate FastAPI/Pydantic JSON API and React/TypeScript/Vite SPA in one repository.** PostgreSQL is the system of record; HTTPX is the async GitHub client; SQLAlchemy async sessions and Alembic provide persistence; Docker Compose and CI support delivery. | Historical Phase 1 choice. The separate SPA/API boundary remains, while `D-019` supersedes the client framework and language. | [Superseded ADR-001](../adr/ADR-001-fastapi-react-separation.md), [architecture](ARCHITECTURE.md) |
 | `D-006` | **Implement deterministic, versioned rule-based detectors before any AI capability.** | Structural manifests and source patterns are explainable and regression-testable. LLMs, embeddings, and RAG cannot create, upgrade, or detach claims from evidence in v1. | [ADR-002](../adr/ADR-002-rule-based-detection-before-ai.md) |
 | `D-007` | **Pin every scan to one immutable full commit SHA and retrieve all tree/blob content at that SHA.** | Branches move and cannot be a reproducible provenance root. Reports reference completed scans; a later branch state requires a new scan. | [ADR-003](../adr/ADR-003-commit-pinned-evidence.md) |
 | `D-008` | **Freeze evidence contract `0.1`.** Evidence includes canonical skill, detector rule/version, repository and commit, path/hash/lines, redacted excerpt, kind, confidence, coverage, and timestamp. | High/medium evidence qualifies; README-only evidence is low. Redaction uses deterministic typed placeholders such as `[REDACTED:GITHUB_TOKEN]` and occurs before persistence, logs, API, or UI. | [Evidence contract](EVIDENCE_CONTRACT.md), `BR-01`, `NFR-03` in [requirements](REQUIREMENTS.md) |
@@ -49,6 +49,7 @@ These decisions turn the Phase 1 plan into implementation constraints. `D-*` ent
 | `D-016` | **Use PostgreSQL with SQLAlchemy 2.x asynchronous sessions and Alembic migrations.** One mutable `AsyncSession` belongs to one request/task and is never shared across concurrent work; network retrieval occurs outside database write transactions. | This preserves transaction ownership and avoids unsafe concurrent session use. A fresh database must migrate through `head` in CI; production startup does not create schema ad hoc. | [Architecture](ARCHITECTURE.md), [data model](DATA_MODEL.md), `NFR-06` in [requirements](REQUIREMENTS.md) |
 | `D-017` | **Require human confirmation of parsed job skills and make matching explainable.** The user may add, remove, or reclassify skills; a report binds to that immutable confirmed revision. | Rule-based parsing can be wrong. Exact/approved-equivalent matches with qualifying evidence count; related is explanatory only; partial coverage uses `unverified` instead of asserting `missing`. | `FR-05` through `FR-07` in [requirements](REQUIREMENTS.md) |
 | `D-018` | **Apply the locked Definition of Ready below to every sprint story and deliver Sprint 1 as a repository-to-evidence vertical slice.** | A story cannot enter implementation while outcomes, contracts, risks, tests, dependencies, or demonstrations remain undecided. Infrastructure work is integrated into the demonstrable slice. | [Backlog and Sprint 1 plan](BACKLOG.md) |
+| `D-019` | **Implement SkillProof's own SPA with Vue 3, plain JavaScript, and Vite.** Keep FastAPI authoritative and keep the versioned `/api/v1` boundary; exclude TypeScript and React from the product client toolchain. | This supersedes only the client-technology portion of `D-005` before UI implementation. Runtime API fixtures, component tests, linting, and end-to-end coverage replace frontend compile-time type checks. React and TypeScript remain detector targets under `D-009`. | [ADR-007](../adr/ADR-007-adopt-vue-javascript-client.md), [architecture](ARCHITECTURE.md), [backlog](BACKLOG.md) |
 
 ## Locked decision details
 
@@ -113,7 +114,7 @@ A story may enter a sprint only when all of these are true:
 - No product or architecture decision remains unresolved.
 - Any linked High or Critical risk has a preventive control plus an automated test or a named time-boxed spike.
 
-Sprint 1 is the end-to-end public repository → commit-pinned inventory → deterministic evidence → evidence API → basic React evidence view. All Sprint 1 stories in the approved backlog are Ready; a scope or interface change returns the affected story to refinement.
+Sprint 1 is the end-to-end public repository → commit-pinned inventory → deterministic evidence → evidence API → basic Vue evidence view. All Sprint 1 stories in the approved backlog are Ready; the frontend stack amendment is governed by `D-019` and ADR-007.
 
 ## Supersession and review
 

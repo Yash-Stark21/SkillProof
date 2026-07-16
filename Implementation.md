@@ -6,7 +6,7 @@ I reviewed both the [AI-agent milestones](sandbox:/workspace/scratch/1904b27be47
 
 ```mermaid
 flowchart TD
-    UI["React + TypeScript UI"] --> API["FastAPI REST API"]
+    UI["Vue 3 + JavaScript UI"] --> API["FastAPI REST API"]
     API --> GH["GitHub REST API"]
     API --> EN["Evidence and matching engine"]
     EN --> DB["PostgreSQL"]
@@ -14,13 +14,13 @@ flowchart TD
 
 This should be one modular application:
 
-* React + TypeScript + Vite frontend
+* Vue 3 + plain JavaScript + Vite frontend
 * FastAPI owns the API and analysis workflow
 * PostgreSQL stores scans, evidence, jobs, reports, and generated claims
 * No Spring Boot service inside SkillProof v1
 * No separate microservices or Redis/Celery until real measurements justify them
 
-Your existing SteadyMind and Library Management projects already demonstrate Java and Spring Boot. SkillProof should add complementary proof: Python, FastAPI, asynchronous API integration, React, PostgreSQL, testing, and system design.
+Your existing SteadyMind and Library Management projects already demonstrate Java and Spring Boot. SkillProof should add complementary proof: Python, FastAPI, asynchronous API integration, Vue, PostgreSQL, testing, and system design.
 
 ## Phase 1: Assumption autopsy
 
@@ -84,7 +84,7 @@ Replace the Flask-specific implementation:
 | ------------------------- | ------------------------------------ |
 | Flask Blueprints          | `APIRouter` modules                  |
 | Flask request/forms       | Pydantic request schemas             |
-| Jinja pages               | React + TypeScript frontend          |
+| Jinja pages               | Vue 3 + JavaScript frontend          |
 | Flask-SQLAlchemy          | SQLAlchemy 2.x                       |
 | Flask-Migrate             | Alembic                              |
 | `requests`                | Async HTTPX client                   |
@@ -106,9 +106,9 @@ FastAPI explicitly positions `APIRouter` as the equivalent of Flask Blueprints a
 | Persistence      | PostgreSQL                                           |
 | ORM              | SQLAlchemy 2.x with `AsyncSession`                   |
 | Migrations       | Alembic                                              |
-| Frontend         | React, TypeScript, Vite                              |
+| Frontend         | Vue 3, JavaScript, Vite                             |
 | Testing          | Pytest, HTTPX, pytest-asyncio, respx                 |
-| Frontend testing | Vitest, React Testing Library, one Playwright flow   |
+| Frontend testing | Vitest, Vue Test Utils, one Playwright flow          |
 | Quality          | Ruff, mypy, pre-commit                               |
 | Operations       | Docker, Docker Compose, GitHub Actions               |
 | Server           | Uvicorn                                              |
@@ -277,7 +277,7 @@ Before matching, the user can review and correct skills extracted from the job d
 | 5. Job parser                     | Taxonomy-based extraction, required/preferred classification and correction API  | User can verify extracted requirements                 |
 | 6. Matcher                        | Transparent normalization, scoring, evidence mapping and missing-skill analysis  | Every score component is explainable                   |
 | 7. Audit and generators           | Quality audit, resume claims and interview cards                                 | Unsupported-claim tests pass                           |
-| 8. React interface                | Scan workflow, evidence explorer, JD review and report pages                     | Complete responsive user journey works                 |
+| 8. Vue interface                  | Scan workflow, evidence explorer, JD review and report pages                     | Complete responsive user journey works                 |
 | 9. Hardening                      | Security limits, Postgres integration tests, API contract tests and one E2E flow | CI passes; failures are safe and observable            |
 | 10. Deployment and interview pack | Docker deployment, diagrams, ADRs, README, screenshots and demo script           | Public demo can be explained in two minutes            |
 
@@ -291,7 +291,7 @@ SkillProof is ready only when it has:
 * Automatic OpenAPI documentation
 * A real PostgreSQL migration history
 * Unit, integration, API-contract and frontend tests
-* CI enforcing linting, type checks and tests
+* CI enforcing backend type checks plus frontend linting, runtime contracts and tests
 * Architecture and database diagrams
 * ADRs explaining major decisions
 * A scoring document with worked examples
@@ -333,9 +333,8 @@ That single contract forces the entire architecture to serve the actual product 
 
 Before implementation begins, the main review decisions are:
 
-1. React + FastAPI modular monolith, with no Spring Boot inside SkillProof v1
+1. Vue + FastAPI modular monolith, with no Spring Boot inside SkillProof v1
 2. Multi-stack detection in the MVP
 3. Separate Job Fit and Portfolio Quality scores
 4. Commit-level evidence provenance
 5. Six-week scope with authentication and AI deferred
- 

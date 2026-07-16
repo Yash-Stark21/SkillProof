@@ -5,7 +5,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - documentation
   - obsidian
@@ -73,7 +73,7 @@ Use standard Markdown links by default so durable notes remain portable in GitHu
 
 ~~~markdown
 [Evidence contract](inception/EVIDENCE_CONTRACT.md)
-[Architecture decision](adr/ADR-001-fastapi-react-separation.md)
+[Architecture decision](adr/ADR-007-adopt-vue-javascript-client.md)
 ~~~
 
 Curated navigation notes—`Home`, maps of content, indexes, and `Related notes` sections—may use Obsidian wikilinks because Obsidian supports both formats and uses wikilinks naturally for backlinks and graph navigation:

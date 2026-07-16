@@ -8,7 +8,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 tags:
   - skillproof
   - github
@@ -261,7 +261,7 @@ Add required status checks only after `US-07` creates stable CI jobs and each ch
 
 - backend linting, type checking, unit tests, and PostgreSQL integration tests;
 - Alembic upgrade validation against an empty database;
-- frontend linting, type checking, tests, and production build;
+- frontend linting, runtime-contract checks, tests, and production build;
 - evidence contract and golden-corpus tests; and
 - the deterministic repository-to-evidence end-to-end path.
 
@@ -277,7 +277,7 @@ For future GitHub Actions workflows:
 - grant additional permissions only to the job that needs them;
 - pin or deliberately review third-party actions;
 - store GitHub API credentials in repository or environment secrets;
-- never expose a server-side GitHub token to the React client; and
+- never expose a server-side GitHub token to the Vue client; and
 - keep live GitHub calls out of required CI acceptance tests, as defined by Sprint 1.
 
 ## 11. Create Sprint 1 work management
@@ -327,7 +327,7 @@ Then create the Sprint 1 delivery stories from the approved backlog:
 2. `US-02 — Resolve and inventory one immutable GitHub snapshot`
 3. `US-03 — Detect qualifying Python, FastAPI, and Pytest evidence`
 4. `US-04 — Persist and inspect evidence contract 0.1`
-5. `US-05 — Complete the basic React evidence journey`
+5. `US-05 — Complete the basic Vue evidence journey`
 6. `US-06 — Enforce scan limits, partial coverage, and secret redaction`
 7. `US-07 — Gate the vertical slice in CI and migrations`
 
@@ -404,7 +404,7 @@ For a solo project, the pull request is still valuable as a review checkpoint. R
 
 ## 13. Release policy
 
-Do not tag this documentation-only baseline as `v1.0.0`. Create the first pre-release only after the repository-to-evidence vertical slice works through the API and React UI and passes the agreed CI gate. A reasonable first product milestone is `v0.1.0`; the final version remains a release decision, not an automatic result of repository creation.
+Do not tag this documentation-only baseline as `v1.0.0`. Create the first pre-release only after the repository-to-evidence vertical slice works through the API and Vue UI and passes the agreed CI gate. A reasonable first product milestone is `v0.1.0`; the final version remains a release decision, not an automatic result of repository creation.
 
 ## 14. Troubleshooting
 
@@ -475,4 +475,3 @@ Repository setup is complete only when:
 - [[inception/BACKLOG]]
 - [[inception/FEASIBILITY_REPORT]]
 - [[inception/PHASE_1_EXIT_REPORT]]
-
