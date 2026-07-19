@@ -7,7 +7,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-16
+updated: 2026-07-19
 tags:
   - skillproof
   - engineering
@@ -20,6 +20,7 @@ Use this map when designing or reviewing implementation behavior.
 
 ## System design
 
+- [[guides/PostgreSQL Implementation Walkthrough|PostgreSQL Implementation Walkthrough]] — local services, migrations, tests, and operational boundaries
 - [[inception/ARCHITECTURE|Architecture]] — boundaries, flows, security, runtime, and observability
 - [[inception/API_CONTRACT|API Contract]] — requests, responses, errors, states, and compatibility
 - [[inception/DATA_MODEL|Data Model]] — entities, constraints, transactions, and provenance
@@ -34,6 +35,7 @@ Use this map when designing or reviewing implementation behavior.
 
 ## Engineering gates
 
+- [[guides/PostgreSQL Implementation Walkthrough#7. Operational checks|PostgreSQL Operational Checks]]
 - [[guides/Vue Frontend Walkthrough|Vue Frontend Implementation Walkthrough]]
 - [[adr/ADR-007-adopt-vue-javascript-client|Vue and JavaScript Client Decision]]
 - [[inception/BACKLOG#3. Definition of Done|Definition of Done]]
@@ -48,7 +50,7 @@ Run from the project root:
 python -B -m unittest discover -s tests\contract -p "test_*.py" -v
 ```
 
-The test source is outside this vault under `tests/contract`; the traceability matrix is the vault-facing index for those checks.
+For backend database tests, start `postgres-test`, set `TEST_DATABASE_URL`, and run `python -m pytest` from `backend/` as documented in [[guides/PostgreSQL Implementation Walkthrough#5. Run database integration tests|the PostgreSQL walkthrough]]. The contract test source is outside this vault under `tests/contract`; the traceability matrix is the vault-facing index for those checks.
 
 ## Related notes
 

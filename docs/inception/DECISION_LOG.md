@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-16
+updated: 2026-07-19
 tags:
   - skillproof
   - inception
@@ -20,8 +20,8 @@ tags:
 
 | Field | Value |
 | --- | --- |
-| Baseline status | Approved for Sprint 1 entry; frontend stack amended before implementation |
-| Decision date | 2026-07-15; latest amendment 2026-07-16 |
+| Baseline status | Approved for Sprint 1 entry; frontend and PostgreSQL implementation foundations recorded |
+| Decision date | 2026-07-15; latest amendment 2026-07-19 |
 | Decision owner | Solo developer acting as product owner and technical lead |
 | Change policy | Preserve an existing ID; record a dated superseding decision and, for architecture changes, an accepted superseding ADR |
 
@@ -46,7 +46,7 @@ These decisions turn the Phase 1 plan into implementation constraints. `D-*` ent
 | `D-013` | **Treat submitted repositories as untrusted read-only data.** Never clone, check out, build, import, evaluate, or execute them; use only approved HTTPS GitHub hosts and reject redirects to other hosts. | This limits the attack surface and makes deterministic bounded inspection possible. Hitting a safety or eligibility boundary is explicit, never silently ignored. | `NFR-01` in [requirements](REQUIREMENTS.md), [architecture](ARCHITECTURE.md) |
 | `D-014` | **Adopt the versioned default scan bounds recorded below.** Any reached limit produces partial coverage with a stable reason; behavior changes require a scan-policy version change. | Public GitHub capacity and untrusted repository size are finite. Conservative defaults favor honest partial results over unbounded work. | `NFR-02` in [requirements](REQUIREMENTS.md), [`SPK-01`/`SPK-02`](FEASIBILITY_REPORT.md) |
 | `D-015` | **Use the versioned `/api/v1` boundary and one flat safe error envelope.** Stable error codes, not message strings, drive client behavior. | A consistent machine-readable contract supports the separate SPA, hides stack traces/secrets, and correlates sanitized logs. | [API contract](API_CONTRACT.md), `NFR-05` in [requirements](REQUIREMENTS.md) |
-| `D-016` | **Use PostgreSQL with SQLAlchemy 2.x asynchronous sessions and Alembic migrations.** One mutable `AsyncSession` belongs to one request/task and is never shared across concurrent work; network retrieval occurs outside database write transactions. | This preserves transaction ownership and avoids unsafe concurrent session use. A fresh database must migrate through `head` in CI; production startup does not create schema ad hoc. | [Architecture](ARCHITECTURE.md), [data model](DATA_MODEL.md), `NFR-06` in [requirements](REQUIREMENTS.md) |
+| `D-016` | **Use PostgreSQL with SQLAlchemy 2.x asynchronous sessions and Alembic migrations.** Pin development and CI to PostgreSQL 18; deliver the schema through vertical-slice migrations, beginning with the four-table `0001_evidence_ledger` revision. One mutable `AsyncSession` belongs to one request/task and is never shared across concurrent work; network retrieval occurs outside database write transactions. | This preserves transaction ownership, avoids dialect drift and unsafe concurrent session use, and proves repository-to-evidence persistence without deploying unused job/report/claim tables. A fresh database must migrate through `head` in CI; production startup does not create schema ad hoc. | [Architecture](ARCHITECTURE.md), [data model](DATA_MODEL.md), [[guides/PostgreSQL Implementation Walkthrough|PostgreSQL walkthrough]], `NFR-06` in [requirements](REQUIREMENTS.md) |
 | `D-017` | **Require human confirmation of parsed job skills and make matching explainable.** The user may add, remove, or reclassify skills; a report binds to that immutable confirmed revision. | Rule-based parsing can be wrong. Exact/approved-equivalent matches with qualifying evidence count; related is explanatory only; partial coverage uses `unverified` instead of asserting `missing`. | `FR-05` through `FR-07` in [requirements](REQUIREMENTS.md) |
 | `D-018` | **Apply the locked Definition of Ready below to every sprint story and deliver Sprint 1 as a repository-to-evidence vertical slice.** | A story cannot enter implementation while outcomes, contracts, risks, tests, dependencies, or demonstrations remain undecided. Infrastructure work is integrated into the demonstrable slice. | [Backlog and Sprint 1 plan](BACKLOG.md) |
 | `D-019` | **Implement SkillProof's own SPA with Vue 3, plain JavaScript, and Vite.** Keep FastAPI authoritative and keep the versioned `/api/v1` boundary; exclude TypeScript and React from the product client toolchain. | This supersedes only the client-technology portion of `D-005` before UI implementation. Runtime API fixtures, component tests, linting, and end-to-end coverage replace frontend compile-time type checks. React and TypeScript remain detector targets under `D-009`. | [ADR-007](../adr/ADR-007-adopt-vue-javascript-client.md), [architecture](ARCHITECTURE.md), [backlog](BACKLOG.md) |
@@ -127,5 +127,6 @@ Sprint 1 is the end-to-end public repository → commit-pinned inventory → det
 
 - [[Home]]
 - [[MOCs/Delivery MOC]]
+- [[guides/PostgreSQL Implementation Walkthrough]]
 - [[inception/ARCHITECTURE]]
 - [[inception/PHASE_1_EXIT_REPORT]]

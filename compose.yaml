@@ -1,0 +1,41 @@
+name: skillproof
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: skillproof
+      POSTGRES_USER: skillproof
+      POSTGRES_PASSWORD: ${SKILLPROOF_POSTGRES_PASSWORD:-skillproof}
+    ports:
+      - "${SKILLPROOF_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - skillproof-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skillproof -d skillproof"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  postgres-test:
+    image: postgres:18-alpine
+    profiles: ["test"]
+    environment:
+      POSTGRES_DB: skillproof_test
+      POSTGRES_USER: skillproof_test
+      POSTGRES_PASSWORD: ${SKILLPROOF_POSTGRES_TEST_PASSWORD:-skillproof_test}
+    ports:
+      - "${SKILLPROOF_POSTGRES_TEST_PORT:-5433}:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skillproof_test -d skillproof_test"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+      start_period: 5s
+
+volumes:
+  skillproof-postgres-data:

@@ -1,0 +1,2 @@
+"""SkillProof schema revisions."""
+

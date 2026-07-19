@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-16
+updated: 2026-07-19
 tags:
   - skillproof
   - inception
@@ -19,8 +19,8 @@ tags:
 # SkillProof Architecture
 
 **Status:** Accepted for MVP implementation  
-**Architecture version:** `0.2`<br>
-**Last updated:** 2026-07-16
+**Architecture version:** `0.3`<br>
+**Last updated:** 2026-07-19
 
 ## 1. Purpose and architectural drivers
 
@@ -71,6 +71,21 @@ SkillProof has two deployable application artifacts: a static frontend and one A
 
 Suggested backend package boundaries are `api`, `domain`, `services`, `detectors`, `integrations/github`, and `db`. Imports point inward: API and adapters depend on services/domain; domain code does not import FastAPI, HTTPX, or SQLAlchemy.
 
+### 3.1 PostgreSQL adapter boundary
+
+```mermaid
+flowchart LR
+    Router["FastAPI router"] --> Service["Application service"]
+    Service --> Port["Repository / Unit of Work port"]
+    Port --> Adapter["SQLAlchemy async adapter"]
+    Adapter -->|"psycopg 3"| PG["PostgreSQL 18"]
+    Coordinator["Scan coordinator"] --> Service
+```
+
+PostgreSQL is the internal system of record behind application-owned persistence interfaces. HTTP handlers, scan coordination, and detectors do not execute SQL or exchange ORM entities. SQLAlchemy models, query implementations, async engine/session configuration, and Alembic metadata remain inside `backend/app/db`; services receive repository/unit-of-work abstractions and domain values.
+
+The first migration is deliberately narrower than the full MVP model. Revision `0001_evidence_ledger` creates `repositories`, `scans`, `repo_files`, and `evidence_items`; job, match, report, and claim tables arrive through later additive revisions. This lets the database grow along the approved repository-to-evidence vertical slice rather than deploying unused schema.
+
 ## 4. Primary data flow
 
 ### 4.1 Repository-to-evidence scan
@@ -99,11 +114,12 @@ A fatal failure before a useful pinned snapshot exists sets `status=failed` and 
 
 ## 5. Runtime and transaction model
 
-- The API uses FastAPI/Pydantic 2 and async HTTPX; PostgreSQL access uses SQLAlchemy 2 `AsyncSession`.
+- The API uses FastAPI/Pydantic 2 and async HTTPX; PostgreSQL access uses SQLAlchemy 2 `AsyncSession` with psycopg 3 through `postgresql+psycopg://` URLs.
 - Each HTTP request and each background scan task owns exactly one session lifecycle. A session is never shared across concurrent coroutines.
 - GitHub downloads use a configurable semaphore and explicit timeouts. Concurrency is bounded; defaults are configuration, not embedded detector behavior.
 - Scan-policy `0.1` defaults to 50 GitHub requests, 10,000 evaluated tree entries, 40 fetched file blobs, 256 KiB per file, 5 MiB aggregate file bytes, concurrency 5, and a 10-second timeout per request. The complete policy snapshot and observed counters are stored with each scan.
-- Database writes use short transactions around state transitions and batches. Network calls do not occur while a write transaction is held.
+- Database writes use short transactions around state transitions. Network calls do not occur while a write transaction is held.
+- The bounded file inventory, validated evidence, and completed state are committed atomically in one final unit of work. If that write fails, it is rolled back and the task records a safe failed state through a fresh session/transaction.
 - Scan transitions are `queued -> running -> completed|failed`. A completed scan may have complete or partial coverage.
 - Because v1 tasks are not durable, startup reconciliation marks stale `queued` or `running` scans as failed with `SCAN_INTERRUPTED`. Retrying creates a new scan attempt. Automatic cross-process retry is deferred.
 - Matching/report creation is synchronous after scan completion because it uses persisted data only. If profiling later shows it is heavy, it can move behind the same service interface.
@@ -153,7 +169,10 @@ Initial operational measures are:
 
 ## 9. Development and delivery topology
 
-- Local development uses Docker Compose for PostgreSQL and documented frontend/backend commands.
+- Local development uses `compose.yaml`: `postgres` is the persistent PostgreSQL 18 service on port `5432`, while the opt-in `postgres-test` profile is an isolated disposable service on port `5433`.
+- The PostgreSQL 18 development volume mounts `/var/lib/postgresql`, the parent of its versioned `PGDATA`; the test service uses `tmpfs` and never shares the development volume.
+- Local Compose credentials are low-value documented defaults only. CI, staging, and production inject `DATABASE_URL`; no production secret is committed.
+- Alembic is run explicitly before the API starts. Application startup never invokes `create_all` or automatically mutates schema.
 - CI gates include backend linting, type checking, unit tests, integration/contract tests, Alembic upgrade validation, frontend lint/component/runtime-contract/build checks, and the golden evidence regression suite.
 - Environments progress through development, CI/test, staging, and production. Configuration is environment-driven and secrets are injected, never committed.
 - The Vue build can be hosted as static assets independently from the API. Both artifacts are released from the same repository and compatible API version.
@@ -190,5 +209,6 @@ Architecture implementation is acceptable when:
 
 - [[Home]]
 - [[MOCs/Engineering MOC]]
+- [[guides/PostgreSQL Implementation Walkthrough]]
 - [[inception/DATA_MODEL]]
 - [[inception/API_CONTRACT]]
