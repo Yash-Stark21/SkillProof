@@ -8,7 +8,7 @@ status: active
 phase: implementation
 owner: solo-developer
 created: 2026-07-19
-updated: 2026-07-19
+updated: 2026-07-22
 tags:
   - skillproof
   - backend
@@ -20,7 +20,7 @@ tags:
 
 # PostgreSQL Implementation Walkthrough
 
-**Change date:** 2026-07-19<br>
+**Change date:** 2026-07-22<br>
 **Outcome:** PostgreSQL 18 now fits behind SkillProof's FastAPI service as the migration-managed system of record for the first repository-to-evidence vertical slice.
 
 This guide explains the database boundary, the initial schema, local operations, migration workflow, transaction ownership, and the limits of this increment.
@@ -67,51 +67,72 @@ The migration uses UUID keys, UTC `TIMESTAMPTZ`, JSONB policy/snapshot fields, `
 
 Job descriptions, matches, reports, and claims remain part of the approved target model but are intentionally deferred to additive migrations. Revision `0001` must not create placeholder tables for those later capabilities.
 
-## 3. Start PostgreSQL locally
+## 3. Set up the installed PostgreSQL 18 service
 
 ### Prerequisites
 
-- Docker Desktop with Docker Compose v2;
-- a supported Python environment for `backend/`; and
-- port `5432` available for development and `5433` available when integration tests run.
+- PostgreSQL 18 installed on Windows and registered as service `postgresql-x64-18`;
+- PostgreSQL client tools in `C:\Program Files\PostgreSQL\18\bin` or available on `PATH`;
+- the existing backend virtual environment at `backend/.venv`; and
+- `localhost:5432` available to the native service.
 
-From the repository root, start the persistent development service:
+Confirm that the Windows service and server are reachable:
 
 ```powershell
-docker compose up -d postgres
-docker compose ps postgres
-docker compose exec postgres pg_isready -U skillproof -d skillproof
+Get-Service -Name postgresql-x64-18
+& "C:\Program Files\PostgreSQL\18\bin\pg_isready.exe" -h localhost -p 5432
 ```
 
-The development connection URL is:
+If PostgreSQL was installed in a different directory, use the matching `pg_isready.exe`; `backend/scripts/setup_local_postgres.ps1` also checks the default PostgreSQL 18 tools directory and `PATH`. Start a stopped service through Windows Services or an elevated PowerShell session before continuing.
 
-```text
-postgresql+psycopg://skillproof:skillproof@localhost:5432/skillproof
-```
-
-The username, password, and database in `compose.yaml` are explicit local-development defaults, not production credentials. Override the host port with `SKILLPROOF_POSTGRES_PORT` and the local password with `SKILLPROOF_POSTGRES_PASSWORD` when needed. Staging and production must inject `DATABASE_URL` from their secret/configuration system.
-
-PostgreSQL 18 stores its versioned `PGDATA` below `/var/lib/postgresql`, so the named development volume is mounted at that parent path. This follows the [PostgreSQL Docker Official Image guidance](https://hub.docker.com/_/postgres) and prevents a container recreation from silently bypassing the intended volume.
-
-## 4. Install and migrate the backend
-
-From the repository root:
+Prepare the backend dependencies with the repository-local virtual environment:
 
 ```powershell
 Set-Location backend
-python -m pip install -e ".[dev]"
-$env:DATABASE_URL = "postgresql+psycopg://skillproof:skillproof@localhost:5432/skillproof"
-python -m alembic upgrade head
-python -m alembic current
+.\.venv\Scripts\python.exe -c "import sys; print(sys.executable)"
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+Set-Location ..
 ```
+
+From the repository root, run the local database setup:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\backend\scripts\setup_local_postgres.ps1
+```
+
+The script securely prompts for the PostgreSQL administrator password. The input is masked and is used only for the setup process; it is not written to `backend/.env`, process output, or the repository. Do not put the administrator password directly on a command line or in an environment file. The script is idempotent and non-destructive by default.
+
+The setup provisions these native resources on the same PostgreSQL 18 instance:
+
+| Purpose | Database | Application role | Local-only password | Schema | SQLAlchemy URL |
+| --- | --- | --- | --- | --- | --- |
+| Development | `skillproof` | `skillproof` | `skillproof` | `public` | `postgresql+psycopg://skillproof:skillproof@localhost:5432/skillproof` |
+| Integration test | `skillproof_test` | `skillproof_test` | `skillproof_test` | `public` | `postgresql+psycopg://skillproof_test:skillproof_test@localhost:5432/skillproof_test` |
+
+Each application role owns its database and `public` schema; unrestricted `PUBLIC` schema creation is revoked. The listed passwords are deliberately low-value workstation credentials and must never be reused in staging or production.
+
+When absent, the script creates `backend/.env` with the native development and test URLs. That file is ignored by Git, contains only application-role credentials, and must remain uncommitted. An existing `backend/.env` is preserved for deliberate local configuration. The setup exports the URLs for its own process, runs Alembic `upgrade head`, verifies `current`, and runs the migration drift check. The expected development head is `0001_evidence_ledger` in schema `public`.
+
+## 4. Migrate and run the backend
+
+The setup script applies the current migration. To verify or reapply it explicitly, run from the repository root:
+
+```powershell
+Set-Location backend
+.\.venv\Scripts\python.exe -m alembic upgrade head
+.\.venv\Scripts\python.exe -m alembic current
+.\.venv\Scripts\python.exe -m alembic check
+```
+
+`current` must report `0001_evidence_ledger (head)`. This migration creates `repositories`, `scans`, `repo_files`, and `evidence_items` in the development database's `public` schema. If `backend/.env` is intentionally absent, set `DATABASE_URL` in the current process before running Alembic.
 
 Run the API from the same directory after migration:
 
 ```powershell
-python -m uvicorn app.main:app --reload
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --reload
 ```
 
-The application never calls `create_all` and never runs migrations during startup. Migration is an explicit development, CI, and deployment step. `/health/live` checks the process only; `/health/ready` performs a bounded database connectivity check and returns the safe `NOT_READY` response when PostgreSQL is unavailable.
+The application never calls `create_all` and never runs migrations during startup. Migration is an explicit development, CI, and deployment step. `/api/v1/health/live` checks the process only; `/api/v1/health/ready` performs a bounded database connectivity check and returns the safe `NOT_READY` response when PostgreSQL is unavailable.
 
 ### Migration authoring workflow
 
@@ -119,35 +140,53 @@ For a future schema change:
 
 ```powershell
 Set-Location backend
-python -m alembic revision --autogenerate -m "describe the additive change"
-python -m alembic upgrade head
+.\.venv\Scripts\python.exe -m alembic revision --autogenerate -m "describe the additive change"
+.\.venv\Scripts\python.exe -m alembic upgrade head
 ```
 
 Review generated SQL, constraint names, downgrade order, and data-compatibility requirements before accepting a revision. Use downgrades only against disposable local/test data; production rollback should normally use a reviewed forward repair migration.
 
 ## 5. Run database integration tests
 
-The `postgres-test` Compose profile is isolated from development: it publishes port `5433`, uses a different database and role, and keeps its cluster on a disposable `tmpfs` mount.
+The native `skillproof_test` database is isolated from development by database and role while sharing the local service on port `5432`. The integration fixture refuses the development database, requires a database name ending in `_test`, migrates the test schema from base to head, rolls back each test transaction, and downgrades the schema to base when the session ends.
 
-From the repository root:
+Export the test URL explicitly because the PostgreSQL integration module reads `TEST_DATABASE_URL` from the process environment:
+
+```powershell
+Set-Location backend
+$env:TEST_DATABASE_URL = "postgresql+psycopg://skillproof_test:skillproof_test@localhost:5432/skillproof_test"
+.\.venv\Scripts\python.exe -m pytest
+Remove-Item Env:TEST_DATABASE_URL
+```
+
+The database suite must use real PostgreSQL; SQLite is not an accepted substitute for JSONB, constraints, async transaction behavior, or PostgreSQL query semantics. Tests should build an empty database through Alembic, not ORM metadata.
+
+### Optional Docker Compose fallback
+
+`compose.yaml` is retained for contributors who do not have the native Windows service. It is an alternative local runtime, not the default setup. The Compose development service publishes port `5432`, which conflicts with a running `postgresql-x64-18` service; either use a different host port or intentionally stop the native service before starting that container.
+
+This example keeps the Windows service running and publishes the optional development container on `55432`:
+
+```powershell
+$env:SKILLPROOF_POSTGRES_PORT = "55432"
+docker compose up -d postgres
+$env:DATABASE_URL = "postgresql+psycopg://skillproof:skillproof@localhost:55432/skillproof"
+Set-Location backend
+.\.venv\Scripts\python.exe -m alembic upgrade head
+Set-Location ..
+```
+
+The optional `postgres-test` profile still publishes its disposable database on port `5433`:
 
 ```powershell
 docker compose --profile test up -d postgres-test
 $env:TEST_DATABASE_URL = "postgresql+psycopg://skillproof_test:skillproof_test@localhost:5433/skillproof_test"
 Set-Location backend
-python -m pytest
+.\.venv\Scripts\python.exe -m pytest
+Set-Location ..
 ```
 
-The database suite must use real PostgreSQL; SQLite is not an accepted substitute for JSONB, constraints, async transaction behavior, or PostgreSQL query semantics. Tests should build an empty database through Alembic, not ORM metadata.
-
-Stop services from the repository root:
-
-```powershell
-docker compose --profile test stop postgres-test
-docker compose stop postgres
-```
-
-`docker compose down` removes containers and the network but retains the named development volume. `docker compose down --volumes` also deletes the development database and should be used only for an intentional local reset.
+Run Compose commands from the repository root. `docker compose down` removes containers and the network but retains the named development volume. `docker compose down --volumes` deletes only the Compose development volume; it does not reset the native Windows databases and should be used only for an intentional container-database reset.
 
 ## 6. Transaction boundaries
 
@@ -164,31 +203,47 @@ These boundaries prevent accepted work from disappearing, prevent partially pers
 
 ## 7. Operational checks
 
-Run these checks before considering the database slice healthy:
+Run these checks before considering the native database slice healthy:
 
 ```powershell
-docker compose config
-docker compose --profile test config
-docker compose ps
+Get-Service -Name postgresql-x64-18
+& "C:\Program Files\PostgreSQL\18\bin\pg_isready.exe" -h localhost -p 5432
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -p 5432 -U skillproof -d skillproof -W -c "SELECT current_database(), current_schema(), current_user;"
+Set-Location backend
+.\.venv\Scripts\python.exe -m alembic current
+.\.venv\Scripts\python.exe -m alembic check
 ```
 
 Then verify:
 
-- `python -m alembic upgrade head` succeeds against a fresh development or test database;
-- `python -m alembic current` reports `0001_evidence_ledger` at head;
-- backend unit, repository, migration, and API tests pass against `postgres-test`;
-- API state survives an API-process restart while the `postgres` container and named volume remain;
+- the service status is `Running` and `pg_isready` accepts connections on `localhost:5432`;
+- the SQL identity query reports database `skillproof`, schema `public`, and user `skillproof`;
+- `.\.venv\Scripts\python.exe -m alembic upgrade head` succeeds and `current` reports `0001_evidence_ledger (head)`;
+- backend unit, repository, migration, and API tests pass against `skillproof_test`, never `skillproof`;
+- API state survives an API-process restart while the Windows PostgreSQL service remains available;
 - readiness becomes unavailable when PostgreSQL is stopped while liveness remains process-only; and
 - raw source files, tokens, secrets, and unredacted excerpts do not appear in database rows or logs.
+
+For the optional Compose fallback, additionally run `docker compose config`, `docker compose --profile test config`, and `docker compose ps` from the repository root.
+
+### Intentional native reset
+
+The setup script's `-Reset` switch force-drops and recreates both `skillproof` and `skillproof_test` before restoring roles, `public` schema ownership, and the migration head:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\backend\scripts\setup_local_postgres.ps1 -Reset
+```
+
+This permanently deletes all local application and test data. Stop the API and test processes first, back up anything needed, confirm that the target is the local PostgreSQL 18 instance, and let the script prompt securely for the administrator password. Never use `-Reset` against staging, production, a shared server, or a database containing work you need. Do not manually drop the whole PostgreSQL cluster or restart `postgresql-x64-18` merely to reset SkillProof; the service can contain unrelated databases. Compose volume deletion and the native `-Reset` path are separate operations.
 
 ## 8. Current limitations
 
 - The PostgreSQL/API foundation does not yet retrieve GitHub content or execute detector rules. Its coordinator seam records an explicit safe terminal failure rather than fabricating evidence; live ingestion remains a later Sprint 1 increment.
 - The v1 scan coordinator is in-process and not durable across API restarts; reconciliation records interruption rather than resuming work.
 - This increment persists the repository-to-evidence slice only. Job parsing, matching, reports, scores, and claims require later migrations.
-- Authentication, private repositories, row-level security, replicas, backups, point-in-time recovery, connection proxies, and production pool sizing are not configured by local Compose.
-- The Compose passwords are intentionally low-value local examples. Never reuse them outside a developer workstation or CI sandbox.
-- Major PostgreSQL upgrades require an explicit backup/restore or `pg_upgrade` procedure; changing the image major is not an ordinary Compose restart.
+- Authentication, private repositories, row-level security, replicas, backups, point-in-time recovery, connection proxies, and production pool sizing are not configured by the native local setup or optional Compose fallback.
+- Native application-role and Compose passwords are intentionally low-value local examples. Never reuse them outside a developer workstation or CI sandbox, and never store the PostgreSQL administrator password in `backend/.env`.
+- Major PostgreSQL upgrades require an explicit backup/restore or `pg_upgrade` procedure; replacing the Windows service or changing a container image major is not an ordinary restart.
 
 ## Related notes
 

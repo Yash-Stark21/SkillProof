@@ -7,7 +7,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-22
 tags:
   - skillproof
   - documentation
@@ -31,6 +31,7 @@ This folder is both the project documentation tree and an Obsidian vault. It use
 - [Project map](MOCs/Project%20MOC.md)
 - [Inception baseline](inception/README.md)
 - [Architecture decisions](adr/README.md)
+- [Native PostgreSQL setup and operations](guides/PostgreSQL%20Implementation%20Walkthrough.md)
 - [GitHub repository setup](guides/GitHub%20Repository%20Setup.md)
 - [Documentation conventions](OBSIDIAN_GUIDE.md)
 

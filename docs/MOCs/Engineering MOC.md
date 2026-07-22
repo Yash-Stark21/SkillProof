@@ -7,7 +7,7 @@ status: active
 phase: project
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-19
+updated: 2026-07-22
 tags:
   - skillproof
   - engineering
@@ -20,7 +20,7 @@ Use this map when designing or reviewing implementation behavior.
 
 ## System design
 
-- [[guides/PostgreSQL Implementation Walkthrough|PostgreSQL Implementation Walkthrough]] — local services, migrations, tests, and operational boundaries
+- [[guides/PostgreSQL Implementation Walkthrough|PostgreSQL Implementation Walkthrough]] — native PostgreSQL 18 setup, migrations, tests, optional Compose fallback, and operational boundaries
 - [[inception/ARCHITECTURE|Architecture]] — boundaries, flows, security, runtime, and observability
 - [[inception/API_CONTRACT|API Contract]] — requests, responses, errors, states, and compatibility
 - [[inception/DATA_MODEL|Data Model]] — entities, constraints, transactions, and provenance
@@ -44,13 +44,30 @@ Use this map when designing or reviewing implementation behavior.
 
 ## Local validation
 
-Run from the project root:
+The default local database is the installed Windows PostgreSQL 18 service `postgresql-x64-18`, using tools from `C:\Program Files\PostgreSQL\18\bin` or `PATH` on `localhost:5432`. From the project root, `backend/scripts/setup_local_postgres.ps1` securely prompts for the PostgreSQL administrator password, creates the `skillproof` and `skillproof_test` databases with application-owned `public` schemas, writes the ignored `backend/.env` only when absent, and migrates development to `0001_evidence_ledger (head)`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\backend\scripts\setup_local_postgres.ps1
+```
+
+Run the documentation contract from the project root:
 
 ```powershell
 python -B -m unittest discover -s tests\contract -p "test_*.py" -v
 ```
 
-For backend database tests, start `postgres-test`, set `TEST_DATABASE_URL`, and run `python -m pytest` from `backend/` as documented in [[guides/PostgreSQL Implementation Walkthrough#5. Run database integration tests|the PostgreSQL walkthrough]]. The contract test source is outside this vault under `tests/contract`; the traceability matrix is the vault-facing index for those checks.
+For backend checks, use the repository-local virtual environment and target the native test database explicitly:
+
+```powershell
+Set-Location backend
+.\.venv\Scripts\python.exe -c "import sys; print(sys.executable)"
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+$env:TEST_DATABASE_URL = "postgresql+psycopg://skillproof_test:skillproof_test@localhost:5432/skillproof_test"
+.\.venv\Scripts\python.exe -m pytest
+Remove-Item Env:TEST_DATABASE_URL
+```
+
+`compose.yaml` remains an optional fallback; its `postgres` service cannot bind port `5432` while the native Windows service is using it, and its disposable `postgres-test` profile uses port `5433`. Full verification and destructive-reset cautions are documented in [[guides/PostgreSQL Implementation Walkthrough#7. Operational checks|the PostgreSQL walkthrough]]. The contract test source is outside this vault under `tests/contract`; the traceability matrix is the vault-facing index for those checks.
 
 ## Related notes
 

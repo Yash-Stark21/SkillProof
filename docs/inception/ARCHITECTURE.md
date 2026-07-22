@@ -8,7 +8,7 @@ status: approved
 phase: inception
 owner: solo-developer
 created: 2026-07-15
-updated: 2026-07-19
+updated: 2026-07-22
 tags:
   - skillproof
   - inception
@@ -20,7 +20,7 @@ tags:
 
 **Status:** Accepted for MVP implementation  
 **Architecture version:** `0.3`<br>
-**Last updated:** 2026-07-19
+**Last updated:** 2026-07-22
 
 ## 1. Purpose and architectural drivers
 
@@ -165,13 +165,16 @@ Initial operational measures are:
 - unsupported-claim rejection count;
 - API error count and database readiness.
 
-`/health/live` reports process liveness only. `/health/ready` checks application initialization and database connectivity; GitHub is intentionally not a readiness dependency.
+`/api/v1/health/live` reports process liveness only. `/api/v1/health/ready` checks application initialization and database connectivity; GitHub is intentionally not a readiness dependency.
 
 ## 9. Development and delivery topology
 
-- Local development uses `compose.yaml`: `postgres` is the persistent PostgreSQL 18 service on port `5432`, while the opt-in `postgres-test` profile is an isolated disposable service on port `5433`.
-- The PostgreSQL 18 development volume mounts `/var/lib/postgresql`, the parent of its versioned `PGDATA`; the test service uses `tmpfs` and never shares the development volume.
-- Local Compose credentials are low-value documented defaults only. CI, staging, and production inject `DATABASE_URL`; no production secret is committed.
+- The primary Windows development topology uses the installed PostgreSQL 18 service `postgresql-x64-18`, client tools from `C:\Program Files\PostgreSQL\18\bin` or `PATH`, and `localhost:5432`.
+- `backend/scripts/setup_local_postgres.ps1` securely prompts for the PostgreSQL administrator password and idempotently provisions separate `skillproof` and `skillproof_test` databases and roles. Both databases use an application-owned `public` schema on port `5432`; unrestricted `PUBLIC` schema creation is revoked.
+- The setup creates the ignored `backend/.env` only when absent, never stores the administrator password, and migrates the development database to Alembic head `0001_evidence_ledger`. Local application-role passwords are low-value documented defaults only.
+- `compose.yaml` is an optional fallback, not the default local topology. Its persistent `postgres` service normally publishes port `5432` and conflicts with the native service unless its host port is changed; its opt-in disposable `postgres-test` profile publishes port `5433`.
+- In the Compose fallback, the PostgreSQL 18 development volume mounts `/var/lib/postgresql`, the parent of its versioned `PGDATA`; the test service uses `tmpfs` and never shares the development volume.
+- CI, staging, and production inject `DATABASE_URL`; no production secret is committed.
 - Alembic is run explicitly before the API starts. Application startup never invokes `create_all` or automatically mutates schema.
 - CI gates include backend linting, type checking, unit tests, integration/contract tests, Alembic upgrade validation, frontend lint/component/runtime-contract/build checks, and the golden evidence regression suite.
 - Environments progress through development, CI/test, staging, and production. Configuration is environment-driven and secrets are injected, never committed.

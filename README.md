@@ -36,16 +36,21 @@ Use `npm run lint`, `npm run test`, and `npm run build` for the frontend quality
 
 ## PostgreSQL
 
-Local development uses PostgreSQL 18 through [`compose.yaml`](compose.yaml). Start the persistent development database from the repository root:
+The primary local database is the installed Windows PostgreSQL 18 instance. It runs as service `postgresql-x64-18`, uses the tools in `C:\Program Files\PostgreSQL\18\bin` (or the same tools on `PATH`), and listens on `localhost:5432`.
+
+Prepare the existing backend virtual environment, then run the idempotent setup from the repository root:
 
 ```powershell
-docker compose up -d postgres
 Set-Location backend
-$env:DATABASE_URL = "postgresql+psycopg://skillproof:skillproof@localhost:5432/skillproof"
-python -m alembic upgrade head
+.\.venv\Scripts\python.exe -c "import sys; print(sys.executable)"
+.\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+Set-Location ..
+powershell -ExecutionPolicy Bypass -File .\backend\scripts\setup_local_postgres.ps1
 ```
 
-The isolated test database is available as the `postgres-test` Compose profile on port `5433`. The [PostgreSQL walkthrough](docs/guides/PostgreSQL%20Implementation%20Walkthrough.md) contains the full setup, migration, testing, reset, and transaction-boundary guidance.
+`backend/scripts/setup_local_postgres.ps1` securely prompts for the PostgreSQL administrator password; do not place that password in a command, environment file, or repository. It provisions the `skillproof` development database and `skillproof_test` integration-test database on port `5432`, assigns each application role ownership of its `public` schema, creates the ignored `backend/.env` when absent, and advances the development schema to Alembic head `0001_evidence_ledger`.
+
+[`compose.yaml`](compose.yaml) remains an optional fallback for machines without the native service. Do not start its `postgres` service on port `5432` while `postgresql-x64-18` is running. The [PostgreSQL walkthrough](docs/guides/PostgreSQL%20Implementation%20Walkthrough.md) contains verification, migrations, integration testing, the optional Compose path, and reset cautions.
 
 ## Validate the documentation baseline
 

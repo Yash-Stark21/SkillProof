@@ -22,6 +22,7 @@ from sqlalchemy.engine import URL, make_url
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncConnection, async_sessionmaker, create_async_engine
 
+from app.core.config import get_settings
 from app.db.ledger import SqlAlchemyEvidenceLedgerStore
 from app.db.models import EvidenceItem, RepoFile, Repository, Scan
 from app.db.repositories import SqlAlchemyScanRepository
@@ -50,12 +51,27 @@ def _async_url(value: str) -> URL:
     return url
 
 
+def _database_identity(url: URL) -> tuple[str, int, str]:
+    """Return the server/database identity used by destructive migration guards."""
+
+    host = (url.host or "localhost").casefold()
+    if host in {"127.0.0.1", "::1"}:
+        host = "localhost"
+    return host, url.port or 5432, url.database or ""
+
+
 @pytest.fixture(scope="session", autouse=True)
 def migrated_database() -> Iterator[None]:
     assert TEST_DATABASE_URL is not None  # guarded by the module skip marker
     url = make_url(TEST_DATABASE_URL)
+    if url.get_backend_name() != "postgresql":
+        pytest.fail("Integration migrations require PostgreSQL; SQLite is not supported.")
     if not url.database or not url.database.endswith("_test"):
         pytest.fail("PostgreSQL integration tests require a database ending in '_test'.")
+
+    development_url = make_url(get_settings().database_url)
+    if _database_identity(url) == _database_identity(development_url):
+        pytest.fail("TEST_DATABASE_URL must not target the development database.")
 
     config = Config(str(BACKEND_ROOT / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", TEST_DATABASE_URL.replace("%", "%%"))
